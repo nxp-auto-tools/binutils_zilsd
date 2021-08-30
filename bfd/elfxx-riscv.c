@@ -1881,6 +1881,13 @@ riscv_parse_check_conflicts (riscv_parse_subset_t *rps)
       no_conflict = false;
     }
 
+  if (riscv_lookup_subset (rps->subset_list, "zprv", &subset)
+      && xlen < 64)
+    {
+      rps->error_handler
+	(_("rv32 does not support the `zprv' extension."));
+      no_conflict = false;
+    }
   return no_conflict;
 }
 
