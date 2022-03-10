@@ -3220,6 +3220,10 @@
 #define MASK_CM_MVA01S 0xfc63
 #define MATCH_CM_MVSA01 0xac22
 #define MASK_CM_MVSA01 0xfc63
+/* ZCMT instructions.  */
+#define MATCH_TABLE_JUMP 0xa002
+#define MASK_CM_JT 0xff03
+#define MASK_CM_JALT 0xfc03
 /* Vendor-specific (T-Head) XTheadBa instructions.  */
 #define MATCH_TH_ADDSL 0x0000100b
 #define MASK_TH_ADDSL 0xf800707f
