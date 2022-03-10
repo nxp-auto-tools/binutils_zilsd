@@ -69,6 +69,7 @@ enum riscv_csr_class
   CSR_CLASS_F,		/* f-ext only */
   CSR_CLASS_ZKR,	/* zkr only */
   CSR_CLASS_V,		/* rvv only */
+  CSR_CLASS_ZCMT,	/* zcmt only */
   CSR_CLASS_DEBUG,	/* debug CSR */
   CSR_CLASS_H,		/* hypervisor */
   CSR_CLASS_H_32,	/* hypervisor, rv32 only */
@@ -1158,6 +1159,9 @@ riscv_csr_address (const char *csr_name,
       extension = "sstc";
       break;
     case CSR_CLASS_DEBUG:
+      break;
+    case CSR_CLASS_ZCMT:
+      extension = "zcmt";
       break;
     default:
       as_bad (_("internal: bad RISC-V CSR class (0x%x)"), csr_class);
