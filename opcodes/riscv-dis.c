@@ -747,11 +747,6 @@ print_insn_args (const char *oparg, insn_t l, bfd_vma pc, disassemble_info *info
 		 (int)EXTRACT_STYPE_IMM (l));
 	  break;
 
-	case 'f':
-	  print (info->stream, dis_style_address_offset, "%d",
-		 (int)EXTRACT_STYPE_IMM (l));
-	  break;
-
 	case 'a':
 	  info->target = EXTRACT_JTYPE_IMM (l) + pc;
 	  (*info->print_address_func) (info->target, info);
