@@ -1255,6 +1255,16 @@ static struct riscv_supported_ext riscv_supported_vendor_x_ext[] =
   {"xtheadmemidx",	ISA_SPEC_CLASS_DRAFT,	1, 0, 0 },
   {"xtheadmempair",	ISA_SPEC_CLASS_DRAFT,	1, 0, 0 },
   {"xtheadsync",	ISA_SPEC_CLASS_DRAFT,	1, 0, 0 },
+  {"xxlcz",       ISA_SPEC_CLASS_DRAFT, 1, 0, 0},
+  {"xxlczpstinc", ISA_SPEC_CLASS_DRAFT, 1, 0, 0},
+  {"xxlczbmrk",   ISA_SPEC_CLASS_DRAFT, 1, 0, 0},
+  {"xxlczbitop",  ISA_SPEC_CLASS_DRAFT, 1, 0, 0},
+  {"xxlczslet",   ISA_SPEC_CLASS_DRAFT, 1, 0, 0},
+  {"xxlczabs",    ISA_SPEC_CLASS_DRAFT, 1, 0, 0},
+  {"xxlczmac",    ISA_SPEC_CLASS_DRAFT, 1, 0, 0},
+  {"xxlczbri",    ISA_SPEC_CLASS_DRAFT, 1, 0, 0},
+  {"xxlczbitrev", ISA_SPEC_CLASS_DRAFT, 1, 0, 0},
+  {"xxlczgp",     ISA_SPEC_CLASS_DRAFT, 1, 0, 0},
   {NULL, 0, 0, 0, 0}
 };
 
@@ -2383,6 +2393,27 @@ riscv_multi_subset_supports (riscv_parse_subset_t *rps,
       return riscv_subset_supports (rps, "xtheadmempair");
     case INSN_CLASS_XTHEADSYNC:
       return riscv_subset_supports (rps, "xtheadsync");
+    case INSN_CLASS_XXLCZ:
+      return riscv_subset_supports(rps, "xxlcz");
+    case INSN_CLASS_XXLCZ_PSTINC:
+      return riscv_subset_supports(rps, "xxlczpstinc") || riscv_subset_supports(rps, "xxlcz");
+    case INSN_CLASS_XXLCZ_BMRK:
+      return riscv_subset_supports(rps, "xxlczbmrk") || riscv_subset_supports(rps, "xxlcz");
+    case INSN_CLASS_XXLCZ_BITOP:
+      return riscv_subset_supports(rps, "xxlczbitop") || riscv_subset_supports(rps, "xxlcz");
+    case INSN_CLASS_XXLCZ_SLET:
+      return riscv_subset_supports(rps, "xxlczslet") || riscv_subset_supports(rps, "xxlcz");
+    case INSN_CLASS_XXLCZ_ABS:
+      return riscv_subset_supports(rps, "xxlczabs") || riscv_subset_supports(rps, "xxlcz");
+    case INSN_CLASS_XXLCZ_BRI:
+      return riscv_subset_supports(rps, "xxlczbri") || riscv_subset_supports(rps, "xxlcz");
+    case INSN_CLASS_XXLCZ_BITREV:
+      return riscv_subset_supports(rps, "xxlczbitrev") || riscv_subset_supports(rps, "xxlcz");
+    case INSN_CLASS_XXLCZ_GP:
+      return riscv_subset_supports(rps, "xxlczgp") || riscv_subset_supports(rps, "xxlcz");
+    case INSN_CLASS_XXLCZ_MAC:
+      return riscv_subset_supports(rps, "xxlczmac") || riscv_subset_supports(rps, "xxlcz");
+
     default:
       rps->error_handler
         (_("internal: unreachable INSN_CLASS_*"));
@@ -2541,6 +2572,26 @@ riscv_multi_subset_supports_ext (riscv_parse_subset_t *rps,
       return "xtheadmempair";
     case INSN_CLASS_XTHEADSYNC:
       return "xtheadsync";
+    case INSN_CLASS_XXLCZ:
+      return "xxlcz";
+    case INSN_CLASS_XXLCZ_PSTINC:
+      return "xxlczpstinc' or `xxlcz";
+    case INSN_CLASS_XXLCZ_BMRK:
+      return "xxlczbmrk' or `xxlcz";
+    case INSN_CLASS_XXLCZ_BITOP:
+      return "xxlczbitop' or `xxlcz";
+    case INSN_CLASS_XXLCZ_ABS:
+      return "xxlczabs' or `xxlcz";
+    case INSN_CLASS_XXLCZ_MAC:
+      return "xxlczmac' or `xxlcz";
+    case INSN_CLASS_XXLCZ_SLET:
+      return "xxlczslet' or `xxlcz";
+    case INSN_CLASS_XXLCZ_BRI:
+      return "xxlczbri' or `xxlcz";
+    case INSN_CLASS_XXLCZ_BITREV:
+      return "xxlczbitrev' or `xxlcz";
+    case INSN_CLASS_XXLCZ_GP:
+      return "xxlczgp' or `xxlcz";
     default:
       rps->error_handler
         (_("internal: unreachable INSN_CLASS_*"));
