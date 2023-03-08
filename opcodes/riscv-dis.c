@@ -326,6 +326,16 @@ print_insn_args (const char *oparg, insn_t l, bfd_vma pc, disassemble_info *info
 	      print (info->stream, dis_style_register, "%s",
 		     riscv_fpr_names[EXTRACT_OPERAND (CRS2S, l) + 8]);
 	      break;
+	    case 'Z': /* ZC 16 bits length instruction fields. */
+	      switch (*++oparg)
+          {
+          case 'd':
+		    print (info->stream, dis_style_immediate, "%d",
+            (int)EXTRACT_XLCZ_C_IMM (l));
+            break;
+          default: break;
+          }
+	      break;
 	    }
 	  break;
 
@@ -415,6 +425,72 @@ print_insn_args (const char *oparg, insn_t l, bfd_vma pc, disassemble_info *info
 	case ']':
 	  print (info->stream, dis_style_text, "%c", *oparg);
 	  break;
+
+	case 'b':
+	  switch (*++oparg)
+	    {
+		case '5':
+			print (info->stream, dis_style_immediate, "%d",
+				((int) EXTRACT_I5TYPE_UIMM (l))&0x1F);
+			break;
+		case '8':
+			print (info->stream, dis_style_immediate, "%d",
+				((int) EXTRACT_XLCZ_BRI_CIMM (l))&0xFF);
+			break;
+		case 'B':
+			print (info->stream, dis_style_immediate, "%d",
+				((int) EXTRACT_XLCZ_LGPB_IMM (l))&0x3FFFF);
+			break;
+		case 'b':
+			print (info->stream, dis_style_immediate, "%d",
+				((int) EXTRACT_XLCZ_SGPB_IMM (l))&0x3FFFF);
+			break;
+		case 'c':
+			print (info->stream, dis_style_immediate, "%d",
+				((int) EXTRACT_XLCZ_C_IMM (l))&0x3FF);
+			break;
+		case 'D':
+			print (info->stream, dis_style_immediate, "%d",
+				((int) EXTRACT_XLCZ_LGPD_IMM (l))&0x3FFFF);
+			break;
+		case 'd':
+			print (info->stream, dis_style_immediate, "%d",
+				((int) EXTRACT_XLCZ_SGPD_IMM (l))&0x3FFFF);
+			break;
+		case 'F':
+			print (info->stream, dis_style_immediate, "%d",
+				((int) EXTRACT_XLCZ_BITREV_UIMM3 (l))&0x03);
+			break;
+		case 'H':
+			print (info->stream, dis_style_immediate, "%d",
+				((int) EXTRACT_XLCZ_LGPH_IMM (l))&0xFFFF);
+			break;
+		case 'h':
+			print (info->stream, dis_style_immediate, "%d",
+				((int) EXTRACT_XLCZ_SGPH_IMM (l))&0xFFFF);
+			break;
+		case 'i':
+			print (info->stream, dis_style_immediate, "%d",
+				((int) EXTRACT_I5_1_TYPE_UIMM (l))&0x1F);
+			break;
+		case 'j':
+			print (info->stream, dis_style_immediate, "%d",
+				((int) EXTRACT_XLCZ_DECBNEZ_IMM (l))&0x7FF);
+			break;
+		case 'm':
+			print (info->stream, dis_style_immediate, "%d",
+				((int) EXTRACT_XLCZ_MAC_IMM (l))&0x3FF);
+			break;
+		case 'o':
+			print (info->stream, dis_style_immediate, "%d",
+				((int) EXTRACT_XLCZ_BRI_OFST (l))&0x1FF);
+			break;
+		case 'W':
+			print (info->stream, dis_style_immediate, "%d",
+				((int) EXTRACT_XLCZ_LGPW_IMM (l))&0x1FFFF);
+			break;
+		}
+		break;
 
 	case '0':
 	  /* Only print constant 0 if it is the last argument.  */
