@@ -2402,6 +2402,26 @@ const struct riscv_opcode riscv_opcodes[] =
 {"urstsa32",   64, INSN_CLASS_ZPRV, "d,s,t",     MATCH_URSTSA32, MASK_URSTSA32, match_opcode, 0 },
 {"ursub32",    64, INSN_CLASS_ZPRV, "d,s,t",     MATCH_URSUB32, MASK_URSUB32, match_opcode, 0 },
 
+// for nucleisys add dsp 32 ins
+{"dkhm8"        , 0, INSN_CLASS_ZPSF, "d,s,t", MATCH_DKHM8    , MASK_DKHM8     , match_opcode, 0},
+{"dkhm16"       , 0, INSN_CLASS_ZPSF, "d,s,t", MATCH_DKHM16   , MASK_DKHM16    , match_opcode, 0},
+{"dkabs8"       , 0, INSN_CLASS_ZPSF, "d,s", MATCH_DKABS8   , MASK_DKABS8    , match_opcode, 0},
+{"dkabs16"      , 0, INSN_CLASS_ZPSF, "d,s", MATCH_DKABS16  , MASK_DKABS16   , match_opcode, 0},
+{"dkslra8"      , 0, INSN_CLASS_ZPSF, "d,s,t", MATCH_DKSLRA8  , MASK_DKSLRA8   , match_opcode, 0},
+{"dkslra16"     , 0, INSN_CLASS_ZPSF, "d,s,t", MATCH_DKSLRA16 , MASK_DKSLRA16  , match_opcode, 0},
+{"dkadd8"       , 0, INSN_CLASS_ZPSF, "d,s,t", MATCH_DKADD8   , MASK_DKADD8    , match_opcode, 0},
+{"dkadd16"      , 0, INSN_CLASS_ZPSF, "d,s,t", MATCH_DKADD16  , MASK_DKADD16   , match_opcode, 0},
+{"dksub8"       , 0, INSN_CLASS_ZPSF, "d,s,t", MATCH_DKSUB8   , MASK_DKSUB8     , match_opcode, 0},
+{"dksub16"      , 0, INSN_CLASS_ZPSF, "d,s,t", MATCH_DKSUB16  , MASK_DKSUB16   , match_opcode, 0},
+{"expd80"       , 0, INSN_CLASS_ZPSF, "d,s", MATCH_EXPD80   , MASK_EXPD80    , match_opcode, 0},
+{"expd81"       , 0, INSN_CLASS_ZPSF, "d,s", MATCH_EXPD81   , MASK_EXPD81    , match_opcode, 0},
+{"expd82"       , 0, INSN_CLASS_ZPSF, "d,s", MATCH_EXPD82   , MASK_EXPD82    , match_opcode, 0},
+{"expd83"       , 0, INSN_CLASS_ZPSF, "d,s", MATCH_EXPD83   , MASK_EXPD83    , match_opcode, 0},
+{"expd84"       , 0, INSN_CLASS_ZPSF, "d,s", MATCH_EXPD84   , MASK_EXPD84    , match_opcode, 0},
+{"expd85"       , 0, INSN_CLASS_ZPSF, "d,s", MATCH_EXPD85   , MASK_EXPD85    , match_opcode, 0},
+{"expd86"       , 0, INSN_CLASS_ZPSF, "d,s", MATCH_EXPD86   , MASK_EXPD86    , match_opcode, 0},
+{"expd87"       , 0, INSN_CLASS_ZPSF, "d,s", MATCH_EXPD87   , MASK_EXPD87    , match_opcode, 0},
+
 /* Terminate the list.  */
 {0, 0, INSN_CLASS_NONE, 0, 0, 0, 0, 0}
 };
