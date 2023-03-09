@@ -39,6 +39,8 @@ static inline unsigned int riscv_insn_length (insn_t insn)
     return 8;
   if ((insn & 0x7f) == 0x7f) /* 80-bit extensions. used by dsp, reserved 32bit */
     return 4;
+  if ((insn & 0x7f) == 0x7b) /* 80-bit extensions. used by dsp, reserved 32bit */
+    return 4;
   /* 80- ... 176-bit instructions.  */
   if ((insn & 0x7f) == 0x7f && (insn & 0x7000) != 0x7000)
     return 10 + ((insn >> 11) & 0xe);
