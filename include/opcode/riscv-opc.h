@@ -2998,6 +2998,17 @@
 #define MASK_VDOTUVV  0xfc00707f
 #define MATCH_VFDOTVV  0xe4001057
 #define MASK_VFDOTVV  0xfc00707f
+
+//Nuclei VPU
+#define MATCH_SFVQMACCUVV  0xf200207b
+#define MASK_SFVQMACCUVV   0xfe00707f
+#define MATCH_SFVQMACC     0xf600207b
+#define MASK_SFVQMACC      0xfe00707f
+#define MATCH_SFVQMACCUS   0xfa00207b
+#define MASK_SFVQMACCUS    0xfe00707f
+#define MATCH_SFVQMACCSU   0xfe00207b
+#define MASK_SFVQMACCSU    0xfe00707f
+
 /* Svinval instruction.  */
 #define MATCH_SINVAL_VMA 0x16000073
 #define MASK_SINVAL_VMA 0xfe007fff

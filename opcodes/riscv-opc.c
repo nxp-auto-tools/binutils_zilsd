@@ -1815,6 +1815,12 @@ const struct riscv_opcode riscv_opcodes[] =
 {"vmv4r.v",    0, INSN_CLASS_V, "Vd,Vt", MATCH_VMV4RV, MASK_VMV4RV, match_opcode, 0},
 {"vmv8r.v",    0, INSN_CLASS_V, "Vd,Vt", MATCH_VMV8RV, MASK_VMV8RV, match_opcode, 0},
 
+//Nuclei VPU
+{"sfvqmaccu.vv",  0, INSN_CLASS_V,  "Vd,Vt,VsVm", MATCH_SFVQMACCUVV, MASK_SFVQMACCUVV, match_opcode, 0 },
+{"sfvqmacc.vv",  0, INSN_CLASS_V,  "Vd,Vt,VsVm", MATCH_SFVQMACC, MASK_SFVQMACC, match_opcode, 0 },
+{"sfvqmaccus.vv",  0, INSN_CLASS_V,  "Vd,Vt,VsVm", MATCH_SFVQMACCUS, MASK_SFVQMACCUS, match_opcode, 0 },
+{"sfvqmaccsu.vv",  0, INSN_CLASS_V,  "Vd,Vt,VsVm", MATCH_SFVQMACCSU, MASK_SFVQMACCSU, match_opcode, 0 },
+
 /* Supervisor instructions.  */
 {"csrr",       0, INSN_CLASS_ZICSR, "d,E",   MATCH_CSRRS, MASK_CSRRS|MASK_RS1, match_opcode, INSN_ALIAS },
 {"csrw",       0, INSN_CLASS_ZICSR, "E,s",   MATCH_CSRRW, MASK_CSRRW|MASK_RD, match_opcode, INSN_ALIAS },
