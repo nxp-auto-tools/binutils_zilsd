@@ -2521,6 +2521,30 @@ const struct riscv_opcode riscv_opcodes[] =
 {"drcras32" , 0, INSN_CLASS_ZPSF, "d,s,t", MATCH_DRCRAS32 , MASK_DRCRAS32   , match_opcode, 0},
 {"dkclip64" , 0, INSN_CLASS_ZPSF, "d,s", MATCH_DKCLIP64 , MASK_DKCLIP64   , match_opcode, 0},
 
+//N3
+{"dmsr16",      0, INSN_CLASS_ZPSF, "d,s,t", MATCH_DMSR16, MASK_DMSR16   , match_opcode, 0},
+{"dmsr17",      0, INSN_CLASS_ZPSF, "d,s,t", MATCH_DMSR17, MASK_DMSR17   , match_opcode, 0},
+{"dmsr33",      0, INSN_CLASS_ZPSF, "d,s,t", MATCH_DMSR33, MASK_DMSR33   , match_opcode, 0},
+{"dmxsr33",     0, INSN_CLASS_ZPSF, "d,s,t", MATCH_DMXSR33, MASK_DMXSR33   , match_opcode, 0},
+{"dsmada16" ,   0, INSN_CLASS_ZPSF, "d,s,t", MATCH_DSMADA16 ,   MASK_DSMADA16       , match_opcode, 0},
+{"dsmaxda16"  , 0, INSN_CLASS_ZPSF, "d,s,t", MATCH_DSMAXDA16  , MASK_DSMAXDA16     , match_opcode, 0},
+{"dksms32.u"  , 0, INSN_CLASS_ZPSF, "d,s,t", MATCH_DKSMS32_U  , MASK_DKSMS32_U     , match_opcode, 0},
+{"dmada32"  ,   0, INSN_CLASS_ZPSF, "d,s,t", MATCH_DMADA32   , MASK_DMADA32       , match_opcode, 0},
+{"dredas16",    0, INSN_CLASS_ZPSF, "d,s",   MATCH_DREDAS16 , MASK_DREDAS16     , match_opcode, 0},
+{"dredsa16",    0, INSN_CLASS_ZPSF, "d,s",   MATCH_DREDSA16 , MASK_DREDSA16     , match_opcode, 0},
+{"dreda32",    64, INSN_CLASS_ZPSF, "d,s",   MATCH_DREDA32, MASK_DREDA32, match_opcode, 0 },
+{"dreds32",    64, INSN_CLASS_ZPSF, "d,s",   MATCH_DREDS32, MASK_DREDS32, match_opcode, 0 },
+{"dsma32.u" ,   0, INSN_CLASS_ZPSF, "d,s,t", MATCH_DSMA32_U , MASK_DSMA32_U       ,match_opcode, 0},
+{"dsmxs32.u"  , 0, INSN_CLASS_ZPSF, "d,s,t", MATCH_DSMXS32_U  , MASK_DSMXS32_U     , match_opcode, 0},
+{"dsmxa32.u"  , 0, INSN_CLASS_ZPSF, "d,s,t", MATCH_DSMXA32_U , MASK_DSMXA32_U    , match_opcode, 0},
+{"dsms32.u" , 0, INSN_CLASS_ZPSF, "d,s,t", MATCH_DSMS32_U , MASK_DSMS32_U   , match_opcode, 0},
+{"dsmalbb"  , 0, INSN_CLASS_ZPSF, "d,s,t", MATCH_DSMALBB  , MASK_DSMALBB    , match_opcode, 0},
+{"dsmalbt"  , 0, INSN_CLASS_ZPSF, "d,s,t", MATCH_DSMALBT  , MASK_DSMALBT    , match_opcode, 0},
+{"dsmaltt"  , 0, INSN_CLASS_ZPSF, "d,s,t", MATCH_DSMALTT  , MASK_DSMALTT    , match_opcode, 0},
+{"dkmabb32" , 0, INSN_CLASS_ZPSF, "d,s,t", MATCH_DKMABB32 , MASK_DKMABB32   , match_opcode, 0},
+{"dkmabt32" , 0, INSN_CLASS_ZPSF, "d,s,t", MATCH_DKMABT32 , MASK_DKMABT32   , match_opcode, 0},
+{"dkmatt32" , 0, INSN_CLASS_ZPSF, "d,s,t", MATCH_DKMATT32 , MASK_DKMATT32   , match_opcode, 0},
+
 /* Terminate the list.  */
 {0, 0, INSN_CLASS_NONE, 0, 0, 0, 0, 0}
 };
