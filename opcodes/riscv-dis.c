@@ -845,6 +845,42 @@ print_insn_args (const char *oparg, insn_t l, bfd_vma pc, disassemble_info *info
 	  print (info->stream, dis_style_immediate, "%d", rs1);
 	  break;
 
+	case 'W': /* Various operands.  */
+	  {
+	    switch (*++oparg)
+	      {
+	      case 'i':
+		switch (*++oparg)
+		  {
+		  case 'f':
+		    print (info->stream, dis_style_address_offset, "%d",
+			   (int) EXTRACT_STYPE_IMM (l));
+		    break;
+		  default:
+		    goto undefined_modifier;
+		  }
+		  break;
+	      case 'f':
+		switch (*++oparg)
+		  {
+		  case 'v':
+		    if (riscv_fli_symval[rs1])
+		      print (info->stream, dis_style_text, "%s",
+			     riscv_fli_symval[rs1]);
+		    else
+		      print (info->stream, dis_style_immediate, "%a",
+			     riscv_fli_numval[rs1]);
+		    break;
+		  default:
+		    goto undefined_modifier;
+		  }
+		break;
+	      default:
+		goto undefined_modifier;
+	      }
+	  }
+	  break;
+
 	case 'X': /* Integer immediate.  */
 	  {
 	    size_t n;
@@ -887,6 +923,7 @@ print_insn_args (const char *oparg, insn_t l, bfd_vma pc, disassemble_info *info
 	      }
 	  }
 	  break;
+
 	default:
 	undefined_modifier:
 	  /* xgettext:c-format */

@@ -1436,6 +1436,21 @@ reglist_lookup (char **s, unsigned *rlist)
   return TRUE;
 }
 
+static bool
+flt_lookup (float f, const float *array, size_t size, unsigned *regnop)
+{
+  size_t i;
+
+  for (i = 0; i < size; i++)
+    if (array[i] == f)
+      {
+	*regnop = i;
+	return true;
+      }
+
+  return false;
+}
+
 #define USE_BITS(mask,shift) (used_bits |= ((insn_t)(mask) << (shift)))
 #define USE_IMM(n, s) \
   (used_bits |= ((insn_t)((1ull<<n)-1) << (s)))
@@ -1716,6 +1731,29 @@ validate_riscv_insn (const struct riscv_opcode *opc, int length)
       }
     break;
 
+	case 'W': /* Various operands.  */
+	  switch (*++oparg)
+	    {
+	    case 'i':
+	      switch (*++oparg)
+		{
+		case 'f': used_bits |= ENCODE_STYPE_IMM (-1U); break;
+		default:
+		  goto unknown_validate_operand;
+		}
+	      break;
+	    case 'f':
+	      switch (*++oparg)
+		{
+		case 'v': USE_BITS (OP_MASK_RS1, OP_SH_RS1); break;
+		default:
+		  goto unknown_validate_operand;
+		}
+	      break;
+	    default:
+	      goto unknown_validate_operand;
+	    }
+	  break;
 	case 'X': /* Integer immediate.  */
 	  {
 	    size_t n;
@@ -4367,6 +4405,66 @@ riscv_ip (char *str, struct riscv_cl_insn *ip, expressionS *imm_expr,
 	      imm_expr->X_op = O_absent;
 	      asarg = expr_end;
 	      continue;
+	    case 'W': /* Various operands.  */
+	      switch (*++oparg)
+		{
+		case 'i':
+		  switch (*++oparg)
+		    {
+		    case 'f':
+		      /* Prefetch offset for 'Zicbop' extension.
+			 pseudo S-type but lower 5-bits zero.  */
+		      if (riscv_handle_implicit_zero_offset (imm_expr, asarg))
+			continue;
+		      my_getExpression (imm_expr, asarg);
+		      check_absolute_expr (ip, imm_expr, false);
+		      if (((unsigned) (imm_expr->X_add_number) & 0x1fU)
+			  || imm_expr->X_add_number >= RISCV_IMM_REACH / 2
+			  || imm_expr->X_add_number < -RISCV_IMM_REACH / 2)
+			as_bad (_ ("improper prefetch offset (%ld)"),
+				(long) imm_expr->X_add_number);
+		      ip->insn_opcode |= ENCODE_STYPE_IMM (
+			  (unsigned) (imm_expr->X_add_number) & ~0x1fU);
+		      imm_expr->X_op = O_absent;
+		      asarg = expr_end;
+		      continue;
+		    default:
+		      goto unknown_riscv_ip_operand;
+		    }
+		  break;
+		case 'f':
+		  switch (*++oparg)
+		    {
+		    case 'v':
+		      /* FLI.[HSDQ] value field for 'Zfa' extension.  */
+		      if (!arg_lookup (&asarg, riscv_fli_symval,
+				       ARRAY_SIZE (riscv_fli_symval), &regno))
+			{
+			  /* 0.0 is not a valid entry in riscv_fli_numval.  */
+			  errno = 0;
+			  float f = strtof (asarg, &asarg);
+			  if (errno != 0 || f == 0.0
+			      || !flt_lookup (f, riscv_fli_numval,
+					     ARRAY_SIZE(riscv_fli_numval),
+					     &regno))
+			    {
+			      as_bad (_("bad fli constant operand, "
+					"supported constants must be in "
+					"decimal or hexadecimal floating-point "
+					"literal form"));
+			      break;
+			    }
+			}
+		      INSERT_OPERAND (RS1, *ip, regno);
+		      continue;
+		    default:
+		      goto unknown_riscv_ip_operand;
+		    }
+		  break;
+		default:
+		  goto unknown_riscv_ip_operand;
+		}
+	      break;
 
 	    case 'X': /* Integer immediate.  */
 	      {
