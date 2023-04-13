@@ -119,7 +119,7 @@ static inline unsigned int riscv_insn_length (insn_t insn)
 #define EXTRACT_I5_1_TYPE_UIMM(x) \
   (RV_X(x, 20, 5))
 #define EXTRACT_XLCZ_BRI_CIMM(x) \
-  (RV_X(x, 24, 8))
+  (RV_X(x, 15, 5))
 #define EXTRACT_XLCZ_LGPB_IMM(x) \
   (RV_X(x, 14, 16))
 #define EXTRACT_XLCZ_LGPH_IMM(x) \
@@ -206,7 +206,7 @@ static inline unsigned int riscv_insn_length (insn_t insn)
 #define ENCODE_I5_1_TYPE_UIMM(x) \
   (RV_X(x, 0, 5) << 20)
 #define ENCODE_XLCZ_BRI_CIMM(x) \
-  (RV_X(x, 0, 8) << 24)
+  (RV_X(x, 0, 5) << 15)
 #define ENCODE_XLCZ_LGPB_IMM(x) \
   (RV_X(x, 0, 16) << 14)
 #define ENCODE_XLCZ_LGPH_IMM(x) \

@@ -1917,8 +1917,8 @@ const struct riscv_opcode riscv_opcodes[] =
 {"xl.fl0",       0, INSN_CLASS_XXLCZ_BITOP, "d,s", MATCH_XL_FL0, MASK_XL_FL0, match_opcode, 0 },
 {"xl.ff0",       0, INSN_CLASS_XXLCZ_BITOP, "d,s", MATCH_XL_FF0, MASK_XL_FF0, match_opcode, 0 },
 
-{"xl.beqi",    0, INSN_CLASS_XXLCZ_BRI, "s,b8,bo", MATCH_XL_BEQI, MASK_XL_BEQI, match_opcode, 0 },
-{"xl.bnei",    0, INSN_CLASS_XXLCZ_BRI, "s,b8,bo", MATCH_XL_BNEI, MASK_XL_BNEI, match_opcode, 0 },
+{"xl.beqi",    0, INSN_CLASS_XXLCZ_BRI, "t,b8,p", MATCH_XL_BEQI, MASK_XL_BEQI, match_opcode, 0 },
+{"xl.bnei",    0, INSN_CLASS_XXLCZ_BRI, "t,b8,p", MATCH_XL_BNEI, MASK_XL_BNEI, match_opcode, 0 },
 {"xl.decbnez", 0, INSN_CLASS_XXLCZ_BRI, "bj", MATCH_XL_DECBNEZ, MASK_XL_DECBNEZ, match_opcode, 0 },
 {"c.decbnez",  0, INSN_CLASS_XXLCZ_BRI, "CZd", MATCH_C_DECBNEZ, MASK_C_DECBNEZ, match_opcode, 0 },
 
