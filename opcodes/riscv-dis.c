@@ -496,21 +496,41 @@ print_insn_args (const char *oparg, insn_t l, bfd_vma pc, disassemble_info *info
 			print (info->stream, dis_style_immediate, "%d",
 				((int) EXTRACT_I5_1_TYPE_UIMM (l))&0x1F);
 			break;
+		case 'J':
+			print (info->stream, dis_style_immediate, "%d",
+				((int) EXTRACT_XLCZ_DECBNEZ_SCALE (l))&0x3);
+			break;
 		case 'j':
 			print (info->stream, dis_style_immediate, "%d",
 				((int) EXTRACT_XLCZ_DECBNEZ_IMM (l))&0x7FF);
+			break;
+		case 'L':
+			print (info->stream, dis_style_immediate, "%d",
+				((int) EXTRACT_XLCZ_LOAD_IMM (l))&0xFF);
 			break;
 		case 'm':
 			print (info->stream, dis_style_immediate, "%d",
 				((int) EXTRACT_XLCZ_MAC_IMM (l))&0x3FF);
 			break;
+		case 'O':
+			print (info->stream, dis_style_immediate, "%d",
+				((int) EXTRACT_XLCZ_BMRK_IMM (l))&0xFFF);
+			break;
 		case 'o':
 			print (info->stream, dis_style_immediate, "%d",
 				((int) EXTRACT_XLCZ_BRI_OFST (l))&0x1FF);
 			break;
+		case 'S':
+			print (info->stream, dis_style_immediate, "%d",
+				((int) EXTRACT_XLCZ_STORE_IMM (l))&0xFF);
+			break;
 		case 'W':
 			print (info->stream, dis_style_immediate, "%d",
 				((int) EXTRACT_XLCZ_LGPW_IMM (l))&0x1FFFF);
+			break;
+		case 'w':
+			print (info->stream, dis_style_immediate, "%d",
+				((int) EXTRACT_XLCZ_SGPW_IMM (l))&0x7FFF);
 			break;
 		}
 		break;

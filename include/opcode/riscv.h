@@ -118,6 +118,10 @@ static inline unsigned int riscv_insn_length (insn_t insn)
   (RV_X(x, 25, 5))
 #define EXTRACT_I5_1_TYPE_UIMM(x) \
   (RV_X(x, 20, 5))
+#define EXTRACT_XLCZ_LOAD_IMM(x) \
+  (RV_X(x, 20, 8))
+#define EXTRACT_XLCZ_STORE_IMM(x) \
+  (RV_X(x, 7, 5) | (RV_X(x, 25, 3) << 5))
 #define EXTRACT_XLCZ_BRI_CIMM(x) \
   (RV_X(x, 15, 5))
 #define EXTRACT_XLCZ_LGPB_IMM(x) \
@@ -132,16 +136,22 @@ static inline unsigned int riscv_insn_length (insn_t insn)
   ((RV_X(x, 25, 5) << 11) | (RV_X(x, 14, 6) << 5) | (RV_X(x, 7, 5)))
 #define EXTRACT_XLCZ_SGPH_IMM(x) \
   ((RV_X(x, 25, 5) << 11) | (RV_X(x, 15, 5) << 6) | (RV_X(x, 7, 5) << 1))
+#define EXTRACT_XLCZ_SGPW_IMM(x) \
+  ((RV_X(x, 25, 5) << 12) | (RV_X(x, 15, 5) << 7) | (RV_X(x, 7, 5) << 2))
 #define EXTRACT_XLCZ_SGPD_IMM(x) \
   ((RV_X(x, 25, 5) << 13) | (RV_X(x, 15, 5) << 8) | (RV_X(x, 7, 5) << 3))
 #define EXTRACT_XLCZ_MAC_IMM(x) \
-  (RV_X(x, 20, 10))
+  (RV_X(x, 20, 9))
 #define EXTRACT_XLCZ_BRI_OFST(x) \
   ((RV_X(x, 20, 4) << 6) | (RV_X(x, 7, 5) << 1))
 #define EXTRACT_XLCZ_BITREV_UIMM3(x) \
   (RV_X(x, 25, 2))
+#define EXTRACT_XLCZ_BMRK_IMM(x) \
+  ((RV_X(x, 25, 6) << 5) | (RV_X(x, 8, 4) << 1) | (RV_X(x, 7, 1) << 11))
 #define EXTRACT_XLCZ_DECBNEZ_IMM(x) \
-  ((RV_X(x, 15, 5) << 6) | (RV_X(x, 7, 5) << 1))
+  (RV_X(x, 15, 10) << 1)
+#define EXTRACT_XLCZ_DECBNEZ_SCALE(x) \
+  (RV_X(x, 25, 2))
 #define EXTRACT_XLCZ_C_IMM(x) \
   ((RV_X(x, 11, 1) << 4) | (RV_X(x, 9, 2) << 8) | (RV_X(x, 7, 1) << 6) | (RV_X(x, 6, 1) << 7) | (RV_X(x, 3, 3) << 1) | (RV_X(x, 2, 1) << 5))
 
@@ -205,6 +215,10 @@ static inline unsigned int riscv_insn_length (insn_t insn)
   (RV_X(x, 0, 5) << 25)
 #define ENCODE_I5_1_TYPE_UIMM(x) \
   (RV_X(x, 0, 5) << 20)
+#define ENCODE_XLCZ_LOAD_IMM(x) \
+  (RV_X(x, 0, 8) << 20)
+#define ENCODE_XLCZ_STORE_IMM(x) \
+  ((RV_X(x, 0, 5) << 7) | (RV_X(x, 5, 3) << 25))
 #define ENCODE_XLCZ_BRI_CIMM(x) \
   (RV_X(x, 0, 5) << 15)
 #define ENCODE_XLCZ_LGPB_IMM(x) \
@@ -219,16 +233,22 @@ static inline unsigned int riscv_insn_length (insn_t insn)
   ((RV_X(x, 11, 5) << 25) | (RV_X(x, 5, 6) << 14) | (RV_X(x, 0, 5) << 7))
 #define ENCODE_XLCZ_SGPH_IMM(x) \
   ((RV_X(x, 11, 5) << 25) | (RV_X(x, 6, 5) << 15) | (RV_X(x, 1, 5) << 7))
+#define ENCODE_XLCZ_SGPW_IMM(x) \
+  ((RV_X(x, 12, 5) << 25) | (RV_X(x, 7, 5) << 15) | (RV_X(x, 2, 5) << 7))
 #define ENCODE_XLCZ_SGPD_IMM(x) \
   ((RV_X(x, 13, 5) << 25) | (RV_X(x, 8, 5) << 15) | (RV_X(x, 3, 5) << 7))
 #define ENCODE_XLCZ_MAC_IMM(x) \
-  (RV_X(x, 0, 10) << 20)
+  (RV_X(x, 0, 9) << 20)
 #define ENCODE_XLCZ_BRI_OFST(x) \
   ((RV_X(x, 6, 4) << 20) | (RV_X(x, 1, 5) << 7))
 #define ENCODE_XLCZ_BITREV_UIMM3(x) \
   (RV_X(x, 0, 2) << 25)
 #define ENCODE_XLCZ_DECBNEZ_IMM(x) \
-  ((RV_X(x, 6, 5) << 15) | (RV_X(x, 1, 5) << 7))
+  (RV_X(x, 1, 10) << 15)
+#define ENCODE_XLCZ_DECBNEZ_SCALE(x) \
+  (RV_X(x, 0, 2) << 25)
+#define ENCODE_XLCZ_BMRK_IMM(x) \
+  ((RV_X(x, 5, 6) << 25) | (RV_X(x, 1, 4) << 8) | (RV_X(x, 11, 1) << 7))
 #define ENCODE_XLCZ_C_IMM(x) \
   ((RV_X(x, 4, 1) << 11) | (RV_X(x, 8, 2) << 9) | (RV_X(x, 6, 1) << 7) | (RV_X(x, 7, 1) << 6) | (RV_X(x, 1, 3) << 3) | (RV_X(x, 5, 1) << 2))
 
