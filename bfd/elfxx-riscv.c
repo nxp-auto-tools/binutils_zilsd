@@ -1271,6 +1271,11 @@ static struct riscv_supported_ext riscv_supported_vendor_x_ext[] =
   {"xxlczbri",    ISA_SPEC_CLASS_DRAFT, 1, 0, 0},
   {"xxlczbitrev", ISA_SPEC_CLASS_DRAFT, 1, 0, 0},
   {"xxlczgp",     ISA_SPEC_CLASS_DRAFT, 1, 0, 0},
+  {"xxldsp",      ISA_SPEC_CLASS_DRAFT, 1, 0, 0},
+  {"xxldspn1x",   ISA_SPEC_CLASS_DRAFT, 1, 0, 0},
+  {"xxldspn2x",   ISA_SPEC_CLASS_DRAFT, 1, 0, 0},
+  {"xxldspn3x",   ISA_SPEC_CLASS_DRAFT, 1, 0, 0},
+
   {NULL, 0, 0, 0, 0}
 };
 
@@ -2369,11 +2374,25 @@ riscv_multi_subset_supports (riscv_parse_subset_t *rps,
       return (riscv_subset_supports (rps, "zksh") || riscv_subset_supports (rps, "k"));
 
     case INSN_CLASS_ZPN:
-      return (riscv_subset_supports (rps, "zpn") || riscv_subset_supports (rps, "p"));
+      return (riscv_subset_supports (rps, "zpn") || riscv_subset_supports (rps, "p")
+              || riscv_subset_supports (rps, "xxldsp") || riscv_subset_supports (rps, "xxldspn1x")
+              || riscv_subset_supports (rps, "xxldspn2x") || riscv_subset_supports (rps, "xxldspn3x"));
     case INSN_CLASS_ZPRV:
-      return (riscv_subset_supports (rps, "zprv")|| riscv_subset_supports (rps, "p"));
+      return (riscv_subset_supports (rps, "zprv") || riscv_subset_supports (rps, "p")
+              || riscv_subset_supports (rps, "xxldsp") || riscv_subset_supports (rps, "xxldspn1x")
+              || riscv_subset_supports (rps, "xxldspn2x") || riscv_subset_supports (rps, "xxldspn3x"));
     case INSN_CLASS_ZPSF:
-      return (riscv_subset_supports (rps, "zpsf")|| riscv_subset_supports (rps, "p"));
+      return (riscv_subset_supports (rps, "zpsf") || riscv_subset_supports (rps, "p")
+              || riscv_subset_supports (rps, "xxldsp") || riscv_subset_supports (rps, "xxldspn1x")
+              || riscv_subset_supports (rps, "xxldspn2x") || riscv_subset_supports (rps, "xxldspn3x"));
+
+    case INSN_CLASS_XXLDSPN1X:
+      return (riscv_subset_supports (rps, "xxldspn1x")|| riscv_subset_supports (rps, "xxldspn2x") 
+              || riscv_subset_supports (rps, "xxldspn3x"));
+    case INSN_CLASS_XXLDSPN2X:
+      return (riscv_subset_supports (rps, "xxldspn2x") || riscv_subset_supports (rps, "xxldspn3x"));
+    case INSN_CLASS_XXLDSPN3X:
+      return riscv_subset_supports (rps, "xxldspn3x");
 
     case INSN_CLASS_V:
       return (riscv_subset_supports (rps, "v")
