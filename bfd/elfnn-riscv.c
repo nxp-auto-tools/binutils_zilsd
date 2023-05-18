@@ -780,6 +780,7 @@ riscv_elf_check_relocs (bfd *abfd, struct bfd_link_info *info,
 	case R_RISCV_BRANCH:
 	case R_RISCV_RVC_BRANCH:
 	case R_RISCV_RVC_JUMP:
+	case R_RISCV_XL_BMRK_BRANCH:
 	  /* In shared libraries and pie, these relocs are known
 	     to bind locally.  */
 	  if (bfd_link_pic (info))
@@ -1651,6 +1652,12 @@ perform_relocation (const reloc_howto_type *howto,
       value = ENCODE_BTYPE_IMM (value);
       break;
 
+	case R_RISCV_XL_BMRK_BRANCH:
+	  if (!VALID_XLCZ_BMRK_IMM (value))
+	return bfd_reloc_overflow;
+      value = ENCODE_XLCZ_BMRK_IMM (value);
+      break;
+
     case R_RISCV_RVC_BRANCH:
       if (!VALID_CBTYPE_IMM (value))
 	return bfd_reloc_overflow;
@@ -2302,6 +2309,7 @@ riscv_elf_relocate_section (bfd *output_bfd,
 	  continue;
 
 	case R_RISCV_HI20:
+	case R_RISCV_XL_BMRK_BRANCH:
 	case R_RISCV_BRANCH:
 	case R_RISCV_RVC_BRANCH:
 	case R_RISCV_RVC_LUI:

@@ -607,8 +607,8 @@ print_insn_args (const char *oparg, insn_t l, bfd_vma pc, disassemble_info *info
 				((int) EXTRACT_XLCZ_MAC_IMM (l))&0x3FF);
 			break;
 		case 'O':
-			print (info->stream, dis_style_immediate, "%d",
-				((int) EXTRACT_XLCZ_BMRK_IMM (l))&0xFFF);
+			info->target = pc + EXTRACT_XLCZ_BMRK_IMM (l);
+			(*info->print_address_func) ((int)info->target, info);
 			break;
 		case 'o':
 			print (info->stream, dis_style_immediate, "%d",

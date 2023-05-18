@@ -341,6 +341,7 @@ static inline unsigned int riscv_insn_length (insn_t insn)
 
 /* Zcmp extension.  */
 #define VALID_ZCMP_SPIMM(x) (EXTRACT_ZCMP_SPIMM(ENCODE_ZCMP_SPIMM(x)) == (x))
+#define VALID_XLCZ_BMRK_IMM(x) (EXTRACT_XLCZ_BMRK_IMM(ENCODE_XLCZ_BMRK_IMM(x)) == (x))
 
 #define RISCV_RTYPE(insn, rd, rs1, rs2) \
   ((MATCH_ ## insn) | ((rd) << OP_SH_RD) | ((rs1) << OP_SH_RS1) | ((rs2) << OP_SH_RS2))

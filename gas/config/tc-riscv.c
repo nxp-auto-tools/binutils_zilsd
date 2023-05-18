@@ -1881,7 +1881,8 @@ append_insn (struct riscv_cl_insn *ip, expressionS *address_expr,
 
       gas_assert (address_expr);
       if (reloc_type == BFD_RELOC_12_PCREL
-	  || reloc_type == BFD_RELOC_RISCV_JMP)
+	  || reloc_type == BFD_RELOC_RISCV_JMP
+    || reloc_type == BFD_RELOC_RISCV_XL_BMRK)
 	{
 	  int j = reloc_type == BFD_RELOC_RISCV_JMP;
 	  int best_case = insn_length (ip);
@@ -3960,11 +3961,9 @@ riscv_ip (char *str, struct riscv_cl_insn *ip, expressionS *imm_expr,
           ip->insn_opcode |= ENCODE_XLCZ_BRI_CIMM (imm_expr->X_add_number);
           ++oparg;
         } else if (oparg[1]=='O') {
+          *imm_reloc = BFD_RELOC_RISCV_XL_BMRK;
           my_getExpression (imm_expr, asarg);
-          check_absolute_expr (ip, imm_expr, FALSE);
           asarg = expr_end;
-          //if (imm_expr->X_add_number<(-128) || imm_expr->X_add_number>127) break;
-          ip->insn_opcode |= ENCODE_XLCZ_BMRK_IMM (imm_expr->X_add_number);
           ++oparg;
         } else if (oparg[1]=='o') {
           my_getExpression (imm_expr, asarg);
@@ -4952,6 +4951,16 @@ md_apply_fix (fixS *fixP, valueT *valP, segT seg ATTRIBUTE_UNUSED)
 	}
       break;
 
+    case BFD_RELOC_RISCV_XL_BMRK:
+      if (fixP->fx_addsy)
+	{
+	  /* Fill in a tentative value to improve objdump readability.  */
+	  bfd_vma target = S_GET_VALUE (fixP->fx_addsy) + *valP;
+	  bfd_vma delta = target - md_pcrel_from (fixP);
+	  bfd_putl32 (bfd_getl32 (buf) | (ENCODE_XLCZ_BMRK_IMM (delta)), buf);
+	}
+      break;
+
     case BFD_RELOC_RISCV_RVC_BRANCH:
       if (fixP->fx_addsy)
 	{
@@ -5460,8 +5469,16 @@ md_convert_frag_branch (fragS *fragp)
       break;
 
     case 4:
-      reloc = RELAX_BRANCH_UNCOND (fragp->fr_subtype)
-	      ? BFD_RELOC_RISCV_JMP : BFD_RELOC_12_PCREL;
+      insn = bfd_getl32 (buf);
+      
+      if(((insn & MATCH_XL_ADDRCHK) == MATCH_XL_ADDRCHK) 
+            || ((insn & MATCH_XL_BEZM) == MATCH_XL_BEZM))
+      {
+         reloc = BFD_RELOC_RISCV_XL_BMRK;
+      }
+      else
+        reloc = RELAX_BRANCH_UNCOND (fragp->fr_subtype)
+                ? BFD_RELOC_RISCV_JMP : BFD_RELOC_12_PCREL;
       fixp = fix_new_exp (fragp, buf - (bfd_byte *)fragp->fr_literal,
 			  4, &exp, false, reloc);
       buf += 4;

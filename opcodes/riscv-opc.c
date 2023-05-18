@@ -1942,8 +1942,8 @@ const struct riscv_opcode riscv_opcodes[] =
 
 {"xl.bitrev",  0, INSN_CLASS_XXLCZ_BITREV, "d,s,bF,bi", MATCH_XL_BITREV, MASK_XL_BITREV, match_opcode, 0 },
 
-{"xl.addrchk", 0, INSN_CLASS_XXLCZ_BMRK, "s,t,bO", MATCH_XL_ADDRCHK, MASK_XL_ADDRCHK, match_opcode, 0 },
-{"xl.bezm",    0, INSN_CLASS_XXLCZ_BMRK, "s,t,bO", MATCH_XL_BEZM, MASK_XL_BEZM, match_opcode, 0 },
+{"xl.addrchk", 0, INSN_CLASS_XXLCZ_BMRK, "s,t,bO", MATCH_XL_ADDRCHK, MASK_XL_ADDRCHK, match_opcode, INSN_BRANCH },
+{"xl.bezm",    0, INSN_CLASS_XXLCZ_BMRK, "s,t,bO", MATCH_XL_BEZM, MASK_XL_BEZM, match_opcode, INSN_BRANCH },
 {"xl.nzmsk",   0, INSN_CLASS_XXLCZ_BMRK, "d,s", MATCH_XL_NZMSK, MASK_XL_NZMSK, match_opcode, 0 },
 {"xl.ffnz",    0, INSN_CLASS_XXLCZ_BMRK, "d,s", MATCH_XL_FFNZ, MASK_XL_FFNZ, match_opcode, 0 },
 
