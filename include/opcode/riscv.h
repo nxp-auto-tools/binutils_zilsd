@@ -118,10 +118,22 @@ static inline unsigned int riscv_insn_length (insn_t insn)
   (RV_X(x, 25, 5))
 #define EXTRACT_I5_1_TYPE_UIMM(x) \
   (RV_X(x, 20, 5))
-#define EXTRACT_XLCZ_LOAD_IMM(x) \
+#define EXTRACT_XLCZ_LB_IMM(x) \
   (RV_X(x, 20, 8))
-#define EXTRACT_XLCZ_STORE_IMM(x) \
+#define EXTRACT_XLCZ_LH_IMM(x) \
+  (RV_X(x, 20, 8) << 1)
+#define EXTRACT_XLCZ_LW_IMM(x) \
+  (RV_X(x, 20, 8) << 2)
+#define EXTRACT_XLCZ_LD_IMM(x) \
+  (RV_X(x, 20, 8) << 3)
+#define EXTRACT_XLCZ_SB_IMM(x) \
   (RV_X(x, 7, 5) | (RV_X(x, 25, 3) << 5))
+#define EXTRACT_XLCZ_SH_IMM(x) \
+  ((RV_X(x, 7, 5) << 1) | (RV_X(x, 25, 3) << 6))
+#define EXTRACT_XLCZ_SW_IMM(x) \
+  ((RV_X(x, 7, 5) << 2) | (RV_X(x, 25, 3) << 7))
+#define EXTRACT_XLCZ_SD_IMM(x) \
+  ((RV_X(x, 7, 5) << 3) | (RV_X(x, 25, 3) << 8))
 #define EXTRACT_XLCZ_BRI_CIMM(x) \
   (RV_X(x, 15, 5))
 #define EXTRACT_XLCZ_LGPB_IMM(x) \
@@ -223,10 +235,22 @@ static inline unsigned int riscv_insn_length (insn_t insn)
   (RV_X(x, 0, 5) << 25)
 #define ENCODE_I5_1_TYPE_UIMM(x) \
   (RV_X(x, 0, 5) << 20)
-#define ENCODE_XLCZ_LOAD_IMM(x) \
+#define ENCODE_XLCZ_LB_IMM(x) \
   (RV_X(x, 0, 8) << 20)
-#define ENCODE_XLCZ_STORE_IMM(x) \
+#define ENCODE_XLCZ_LH_IMM(x) \
+  (RV_X(x, 1, 8) << 20)
+#define ENCODE_XLCZ_LW_IMM(x) \
+  (RV_X(x, 2, 8) << 20)
+#define ENCODE_XLCZ_LD_IMM(x) \
+  (RV_X(x, 3, 8) << 20)
+#define ENCODE_XLCZ_SB_IMM(x) \
   ((RV_X(x, 0, 5) << 7) | (RV_X(x, 5, 3) << 25))
+#define ENCODE_XLCZ_SH_IMM(x) \
+  ((RV_X(x, 1, 5) << 7) | (RV_X(x, 6, 3) << 25))
+#define ENCODE_XLCZ_SW_IMM(x) \
+  ((RV_X(x, 2, 5) << 7) | (RV_X(x, 7, 3) << 25))
+#define ENCODE_XLCZ_SD_IMM(x) \
+  ((RV_X(x, 3, 5) << 7) | (RV_X(x, 8, 3) << 25))
 #define ENCODE_XLCZ_BRI_CIMM(x) \
   (RV_X(x, 0, 5) << 15)
 #define ENCODE_XLCZ_LGPB_IMM(x) \

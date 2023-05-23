@@ -1672,7 +1672,17 @@ validate_riscv_insn (const struct riscv_opcode *opc, int length)
         case'D': used_bits |= ENCODE_XLCZ_LGPD_IMM(-1U); break;
         case'd': used_bits |= ENCODE_XLCZ_SGPD_IMM(-1U); break;
         case'F': used_bits |= ENCODE_XLCZ_BITREV_UIMM3(-1U); break;
-        case'L': used_bits |= ENCODE_XLCZ_LOAD_IMM(-1U); break;
+        case'L':
+		      switch (*++oparg)
+          {
+            case 'b': used_bits |= ENCODE_XLCZ_LB_IMM (-1U); break;
+            case 'h': used_bits |= ENCODE_XLCZ_LH_IMM (-1U); break;
+            case 'w': used_bits |= ENCODE_XLCZ_LW_IMM (-1U); break;
+            case 'd': used_bits |= ENCODE_XLCZ_LD_IMM (-1U); break;
+          default:
+            goto unknown_validate_operand;
+          }
+          break;
         case'O': used_bits |= ENCODE_XLCZ_BMRK_IMM(-1U); break;
         case'o': used_bits |= ENCODE_XLCZ_BRI_OFST(-1U); break;
         case'J': used_bits |= ENCODE_XLCZ_DECBNEZ_SCALE(-1U); break;
@@ -1681,7 +1691,17 @@ validate_riscv_insn (const struct riscv_opcode *opc, int length)
         case'h': used_bits |= ENCODE_XLCZ_SGPH_IMM(-1U); break;
         case'i': used_bits |= ENCODE_I5_1_TYPE_UIMM(-1U); break;
         case'm': used_bits |= ENCODE_XLCZ_MAC_IMM(-1U); break;
-        case'S': used_bits |= ENCODE_XLCZ_STORE_IMM(-1U); break;
+        case'S':
+		      switch (*++oparg)
+          {
+            case 'b': used_bits |= ENCODE_XLCZ_SB_IMM (-1U); break;
+            case 'h': used_bits |= ENCODE_XLCZ_SH_IMM (-1U); break;
+            case 'w': used_bits |= ENCODE_XLCZ_SW_IMM (-1U); break;
+            case 'd': used_bits |= ENCODE_XLCZ_SD_IMM (-1U); break;
+          default:
+            goto unknown_validate_operand;
+          }
+          break;
         case'W': used_bits |= ENCODE_XLCZ_LGPW_IMM(-1U); break;
         case'w': used_bits |= ENCODE_XLCZ_SGPW_IMM(-1U); break;
         default:
@@ -3989,12 +4009,40 @@ riscv_ip (char *str, struct riscv_cl_insn *ip, expressionS *imm_expr,
           ip->insn_opcode |= ENCODE_I5_1_TYPE_UIMM (imm_expr->X_add_number);
           ++oparg;
         } else if (oparg[1]=='L') {
-          my_getExpression (imm_expr, asarg);
-          check_absolute_expr (ip, imm_expr, FALSE);
-          asarg = expr_end;
-          //if (imm_expr->X_add_number<0 || imm_expr->X_add_number>31) break;
-          ip->insn_opcode |= ENCODE_XLCZ_LOAD_IMM (imm_expr->X_add_number);
-          ++oparg;          
+          ++oparg;
+          switch (*++oparg)
+          {
+            case 'b':
+              my_getExpression (imm_expr, asarg);
+              check_absolute_expr (ip, imm_expr, FALSE);
+              asarg = expr_end;
+              // if (imm_expr->X_add_number<-16 || imm_expr->X_add_number>15) break;
+              ip->insn_opcode |= ENCODE_XLCZ_LB_IMM (imm_expr->X_add_number);
+              continue;
+            case 'h':
+              my_getExpression (imm_expr, asarg);
+              check_absolute_expr (ip, imm_expr, FALSE);
+              asarg = expr_end;
+              // if (imm_expr->X_add_number<-16 || imm_expr->X_add_number>15) break;
+              ip->insn_opcode |= ENCODE_XLCZ_LH_IMM (imm_expr->X_add_number);
+              continue;
+            case 'w':
+              my_getExpression (imm_expr, asarg);
+              check_absolute_expr (ip, imm_expr, FALSE);
+              asarg = expr_end;
+              // if (imm_expr->X_add_number<-16 || imm_expr->X_add_number>15) break;
+              ip->insn_opcode |= ENCODE_XLCZ_LW_IMM (imm_expr->X_add_number);
+              continue;
+            case 'd':
+              my_getExpression (imm_expr, asarg);
+              check_absolute_expr (ip, imm_expr, FALSE);
+              asarg = expr_end;
+              // if (imm_expr->X_add_number<-16 || imm_expr->X_add_number>15) break;
+              ip->insn_opcode |= ENCODE_XLCZ_LD_IMM (imm_expr->X_add_number);
+              continue;
+          default:
+            goto unknown_riscv_ip_operand;
+          }
         } else if (oparg[1]=='m') {
           my_getExpression (imm_expr, asarg);
           check_absolute_expr (ip, imm_expr, FALSE);
@@ -4003,12 +4051,40 @@ riscv_ip (char *str, struct riscv_cl_insn *ip, expressionS *imm_expr,
           ip->insn_opcode |= ENCODE_XLCZ_MAC_IMM (imm_expr->X_add_number);
           ++oparg;
         } else if (oparg[1]=='S') {
-          my_getExpression (imm_expr, asarg);
-          check_absolute_expr (ip, imm_expr, FALSE);
-          asarg = expr_end;
-          //if (imm_expr->X_add_number<0 || imm_expr->X_add_number>31) break;
-          ip->insn_opcode |= ENCODE_XLCZ_STORE_IMM (imm_expr->X_add_number);
-          ++oparg;          
+          ++oparg;
+          switch (*++oparg)
+          {
+            case 'b':
+              my_getExpression (imm_expr, asarg);
+              check_absolute_expr (ip, imm_expr, FALSE);
+              asarg = expr_end;
+              // if (imm_expr->X_add_number<-16 || imm_expr->X_add_number>15) break;
+              ip->insn_opcode |= ENCODE_XLCZ_SB_IMM (imm_expr->X_add_number);
+              continue;
+            case 'h':
+              my_getExpression (imm_expr, asarg);
+              check_absolute_expr (ip, imm_expr, FALSE);
+              asarg = expr_end;
+              // if (imm_expr->X_add_number<-16 || imm_expr->X_add_number>15) break;
+              ip->insn_opcode |= ENCODE_XLCZ_SH_IMM (imm_expr->X_add_number);
+              continue;
+            case 'w':
+              my_getExpression (imm_expr, asarg);
+              check_absolute_expr (ip, imm_expr, FALSE);
+              asarg = expr_end;
+              // if (imm_expr->X_add_number<-16 || imm_expr->X_add_number>15) break;
+              ip->insn_opcode |= ENCODE_XLCZ_SW_IMM (imm_expr->X_add_number);
+              continue;
+            case 'd':
+              my_getExpression (imm_expr, asarg);
+              check_absolute_expr (ip, imm_expr, FALSE);
+              asarg = expr_end;
+              // if (imm_expr->X_add_number<-16 || imm_expr->X_add_number>15) break;
+              ip->insn_opcode |= ENCODE_XLCZ_SD_IMM (imm_expr->X_add_number);
+              continue;
+          default:
+            goto unknown_riscv_ip_operand;
+          }      
         } else if (oparg[1]=='W') {
           my_getExpression (imm_expr, asarg);
           check_absolute_expr (ip, imm_expr, FALSE);

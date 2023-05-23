@@ -592,8 +592,15 @@ print_insn_args (const char *oparg, insn_t l, bfd_vma pc, disassemble_info *info
 				((int) EXTRACT_XLCZ_DECBNEZ_IMM (l))&0x7FF);
 			break;
 		case 'L':
-			print (info->stream, dis_style_immediate, "%d",
-				((int) EXTRACT_XLCZ_LOAD_IMM (l))&0xFF);
+			switch (*++oparg)
+			{
+			case 'b':print (info->stream, dis_style_immediate, "%d", ((int) EXTRACT_XLCZ_LB_IMM (l))&0xFF); break;
+			case 'h':print (info->stream, dis_style_immediate, "%d", ((int) EXTRACT_XLCZ_LH_IMM (l))&0x1FF); break;
+			case 'w':print (info->stream, dis_style_immediate, "%d", ((int) EXTRACT_XLCZ_LW_IMM (l))&0x3FF); break;
+			case 'd':print (info->stream, dis_style_immediate, "%d", ((int) EXTRACT_XLCZ_LD_IMM (l))&0x7FF); break;
+			default:
+				break;
+			}
 			break;
 		case 'm':
 			print (info->stream, dis_style_immediate, "%d",
@@ -608,8 +615,15 @@ print_insn_args (const char *oparg, insn_t l, bfd_vma pc, disassemble_info *info
 				((int) EXTRACT_XLCZ_BRI_OFST (l))&0x1FF);
 			break;
 		case 'S':
-			print (info->stream, dis_style_immediate, "%d",
-				((int) EXTRACT_XLCZ_STORE_IMM (l))&0xFF);
+			switch (*++oparg)
+			{
+			case 'b':print (info->stream, dis_style_immediate, "%d", ((int) EXTRACT_XLCZ_SB_IMM (l))&0xFF); break;
+			case 'h':print (info->stream, dis_style_immediate, "%d", ((int) EXTRACT_XLCZ_SH_IMM (l))&0x1FF); break;
+			case 'w':print (info->stream, dis_style_immediate, "%d", ((int) EXTRACT_XLCZ_SW_IMM (l))&0x3FF); break;
+			case 'd':print (info->stream, dis_style_immediate, "%d", ((int) EXTRACT_XLCZ_SD_IMM (l))&0x7FF); break;
+			default:
+				break;
+			}
 			break;
 		case 'W':
 			print (info->stream, dis_style_immediate, "%d",

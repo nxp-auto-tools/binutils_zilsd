@@ -1901,17 +1901,17 @@ const struct riscv_opcode riscv_opcodes[] =
 {"hsv.d",      64, INSN_CLASS_H, "t,0(s)", MATCH_HSV_D, MASK_HSV_D, match_opcode, INSN_DREF|INSN_8_BYTE },
 
 /* xlcz ext */
-{"xl.lb",     0, INSN_CLASS_XXLCZ_PSTINC, "d,bL(s)", MATCH_XL_LB, MASK_XL_LB, match_opcode, 0 },
-{"xl.lbu",    0, INSN_CLASS_XXLCZ_PSTINC, "d,bL(s)", MATCH_XL_LBU, MASK_XL_LBU, match_opcode, 0 },
-{"xl.lh",     0, INSN_CLASS_XXLCZ_PSTINC, "d,bL(s)", MATCH_XL_LH, MASK_XL_LH, match_opcode, 0 },
-{"xl.lhu",    0, INSN_CLASS_XXLCZ_PSTINC, "d,bL(s)", MATCH_XL_LHU, MASK_XL_LHU, match_opcode, 0 },
-{"xl.lw",     0, INSN_CLASS_XXLCZ_PSTINC, "d,bL(s)", MATCH_XL_LW, MASK_XL_LW, match_opcode, 0 },
-{"xl.sb",     0, INSN_CLASS_XXLCZ_PSTINC, "t,bS(s)", MATCH_XL_SB, MASK_XL_SB, match_opcode, 0 },
-{"xl.sh",     0, INSN_CLASS_XXLCZ_PSTINC, "t,bS(s)", MATCH_XL_SH, MASK_XL_SH, match_opcode, 0 },
-{"xl.sw",     0, INSN_CLASS_XXLCZ_PSTINC, "t,bS(s)", MATCH_XL_SW, MASK_XL_SW, match_opcode, 0 },
-{"xl.lwu",   64, INSN_CLASS_XXLCZ_PSTINC, "d,bL(s)", MATCH_XL_LWU, MASK_XL_LWU, match_opcode, 0 },
-{"xl.ld",    64, INSN_CLASS_XXLCZ_PSTINC, "d,bL(s)", MATCH_XL_LD, MASK_XL_LD, match_opcode, 0 },
-{"xl.sd",    64, INSN_CLASS_XXLCZ_PSTINC, "t,bS(s)", MATCH_XL_SD, MASK_XL_SD, match_opcode, 0 },
+{"xl.lb",     0, INSN_CLASS_XXLCZ_PSTINC, "d,bLb(s)", MATCH_XL_LB, MASK_XL_LB, match_opcode, 0 },
+{"xl.lbu",    0, INSN_CLASS_XXLCZ_PSTINC, "d,bLb(s)", MATCH_XL_LBU, MASK_XL_LBU, match_opcode, 0 },
+{"xl.lh",     0, INSN_CLASS_XXLCZ_PSTINC, "d,bLh(s)", MATCH_XL_LH, MASK_XL_LH, match_opcode, 0 },
+{"xl.lhu",    0, INSN_CLASS_XXLCZ_PSTINC, "d,bLh(s)", MATCH_XL_LHU, MASK_XL_LHU, match_opcode, 0 },
+{"xl.lw",     0, INSN_CLASS_XXLCZ_PSTINC, "d,bLw(s)", MATCH_XL_LW, MASK_XL_LW, match_opcode, 0 },
+{"xl.sb",     0, INSN_CLASS_XXLCZ_PSTINC, "t,bSb(s)", MATCH_XL_SB, MASK_XL_SB, match_opcode, 0 },
+{"xl.sh",     0, INSN_CLASS_XXLCZ_PSTINC, "t,bSh(s)", MATCH_XL_SH, MASK_XL_SH, match_opcode, 0 },
+{"xl.sw",     0, INSN_CLASS_XXLCZ_PSTINC, "t,bSw(s)", MATCH_XL_SW, MASK_XL_SW, match_opcode, 0 },
+{"xl.lwu",   64, INSN_CLASS_XXLCZ_PSTINC, "d,bLw(s)", MATCH_XL_LWU, MASK_XL_LWU, match_opcode, 0 },
+{"xl.ld",    64, INSN_CLASS_XXLCZ_PSTINC, "d,bLd(s)", MATCH_XL_LD, MASK_XL_LD, match_opcode, 0 },
+{"xl.sd",    64, INSN_CLASS_XXLCZ_PSTINC, "t,bSd(s)", MATCH_XL_SD, MASK_XL_SD, match_opcode, 0 },
 
 {"xl.abs",       0, INSN_CLASS_XXLCZ_ABS, "d,s", MATCH_XL_ABS, MASK_XL_ABS, match_opcode, 0 },
 
