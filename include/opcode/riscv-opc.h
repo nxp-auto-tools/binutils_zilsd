@@ -3324,6 +3324,9 @@
 #define MASK_XL_SGP_H      0xc000707f
 #define MATCH_XL_SGP_W     0x8000205b
 #define MASK_XL_SGP_W      0xc000707f
+#define MATCH_XL_ADDIBNE   0x8000707b
+#define MASK_XL_ADDIBNE    0x8000707f
+
 /* Xxlcz instructions(RV64 only) */
 #define MATCH_XL_LWU       0x8000107b
 #define MASK_XL_LWU        0xf000707f

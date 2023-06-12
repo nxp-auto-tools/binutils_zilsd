@@ -4338,6 +4338,9 @@ number for the SBIC, SBIS, SBI and CBI instructions  */
   BFD_RELOC_RISCV_32_PCREL,
   BFD_RELOC_RISCV_XL_BMRK,  
 
+/* Nuclei custom Relocations*/
+  BFD_RELOC_RISCV_XL_ADDIBNE,
+  
 /* Renesas RL78 Relocations.  */
   BFD_RELOC_RL78_NEG8,
   BFD_RELOC_RL78_NEG16,

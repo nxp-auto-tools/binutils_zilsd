@@ -168,6 +168,12 @@ static inline unsigned int riscv_insn_length (insn_t insn)
   (RV_X(x, 25, 2))
 #define EXTRACT_XLCZ_C_IMM(x) \
   ((RV_X(x, 11, 1) << 4) | (RV_X(x, 9, 2) << 8) | (RV_X(x, 7, 1) << 6) | (RV_X(x, 6, 1) << 7) | (RV_X(x, 3, 3) << 1) | (RV_X(x, 2, 1) << 5))
+/* addibne */
+#define EXTRACT_XL_ADDIBNE_IMM(x) \
+  ((RV_X(x, 20, 9)) << 1)
+#define EXTRACT_XL_ADDIBNE_SCALE(x) \
+  (RV_X(x, 29, 2))
+
 
 /* RVP */
 #define EXTRACT_PTYPE_IMM3U(x) \
@@ -290,6 +296,11 @@ static inline unsigned int riscv_insn_length (insn_t insn)
 #define ENCODE_XLCZ_C_IMM(x) \
   ((RV_X(x, 4, 1) << 11) | (RV_X(x, 8, 2) << 9) | (RV_X(x, 6, 1) << 7) | (RV_X(x, 7, 1) << 6) | (RV_X(x, 1, 3) << 3) | (RV_X(x, 5, 1) << 2))
 
+#define ENCODE_XL_ADDIBNE_IMM(x) \
+  ((RV_X(x, 1, 9) << 20))
+#define ENCODE_XL_ADDIBNE_SCALE(x) \
+  (RV_X(x, 0, 2) << 29)
+
 /* RVP */
 #define ENCODE_PTYPE_IMM3U(x) \
   (RV_X(x, 0, 3) << 20)
@@ -342,6 +353,9 @@ static inline unsigned int riscv_insn_length (insn_t insn)
 #define VALID_PTYPE_IMM4U(x) (EXTRACT_PTYPE_IMM4U(ENCODE_PTYPE_IMM4U(x)) == (x))
 #define VALID_PTYPE_IMM5U(x) (EXTRACT_PTYPE_IMM5U(ENCODE_PTYPE_IMM5U(x)) == (x))
 #define VALID_PTYPE_IMM6U(x) (EXTRACT_PTYPE_IMM6U(ENCODE_PTYPE_IMM6U(x)) == (x))
+
+/* addibne extension.  */
+#define VALID_XL_ADDIBNE_IMM(x) (EXTRACT_XL_ADDIBNE_IMM(ENCODE_XL_ADDIBNE_IMM(x)) == (x))
 
 /* Zcb extension.  */
 #define VALID_ZCB_BYTE_UIMM(x) (EXTRACT_ZCB_BYTE_UIMM(ENCODE_ZCB_BYTE_UIMM(x)) == (x))
@@ -488,6 +502,12 @@ static inline unsigned int riscv_insn_length (insn_t insn)
 #define OP_SH_VMA		7
 #define OP_MASK_VWD		0x1
 #define OP_SH_VWD		26
+
+#define OP_MASK_XL_SCALE		0x3
+#define OP_SH_XL_SCALE		29
+
+#define OP_MASK_XL_RS1		0x1f
+#define OP_SH_XL_RS1		15
 
 #define NVECR 32
 #define NVECM 1

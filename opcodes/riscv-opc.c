@@ -2082,6 +2082,9 @@ const struct riscv_opcode riscv_opcodes[] =
 {"xl.bnei",    0, INSN_CLASS_XXLCZ_BRI, "s,b8,p", MATCH_XL_BNEI, MASK_XL_BNEI, match_opcode, INSN_BRANCH },
 {"xl.decbnez", 0, INSN_CLASS_XXLCZ_BRI, "d,bJ,bj", MATCH_XL_DECBNEZ, MASK_XL_DECBNEZ, match_opcode, 0 },
 
+/* nuclei addibne*/
+{"xl.addibne", 0, INSN_CLASS_XXLCZ_BRI, "d,s,bK,bk", MATCH_XL_ADDIBNE, MASK_XL_ADDIBNE, match_opcode, INSN_BRANCH },
+
 {"xl.bitrev",  0, INSN_CLASS_XXLCZ_BITREV, "d,s,bF,bi", MATCH_XL_BITREV, MASK_XL_BITREV, match_opcode, 0 },
 
 {"xl.addrchk", 0, INSN_CLASS_XXLCZ_BMRK, "s,t,bO", MATCH_XL_ADDRCHK, MASK_XL_ADDRCHK, match_opcode, INSN_BRANCH },

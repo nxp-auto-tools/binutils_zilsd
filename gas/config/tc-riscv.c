@@ -1710,6 +1710,8 @@ validate_riscv_insn (const struct riscv_opcode *opc, int length)
         case'o': used_bits |= ENCODE_XLCZ_BRI_OFST(-1U); break;
         case'J': used_bits |= ENCODE_XLCZ_DECBNEZ_SCALE(-1U); break;
         case'j': used_bits |= ENCODE_XLCZ_DECBNEZ_IMM(-1U); break;
+        case'K': used_bits |= ENCODE_XL_ADDIBNE_SCALE(-1U); break;
+        case'k': used_bits |= ENCODE_XL_ADDIBNE_IMM(-1U); break;
         case'H': used_bits |= ENCODE_XLCZ_LGPH_IMM(-1U); break;
         case'h': used_bits |= ENCODE_XLCZ_SGPH_IMM(-1U); break;
         case'i': used_bits |= ENCODE_I5_1_TYPE_UIMM(-1U); break;
@@ -4089,6 +4091,29 @@ riscv_ip (char *str, struct riscv_cl_insn *ip, expressionS *imm_expr,
           asarg = expr_end;
           if (imm_expr->X_add_number<0 || imm_expr->X_add_number>31) break;
           ip->insn_opcode |= ENCODE_I5_1_TYPE_UIMM (imm_expr->X_add_number);
+          ++oparg;
+        /* nuclei addibne */
+        } else if (oparg[1]=='K') {
+          my_getExpression (imm_expr, asarg);
+          check_absolute_expr (ip, imm_expr, FALSE);
+          asarg = expr_end;
+          if (imm_expr->X_add_number<0 || imm_expr->X_add_number>3)
+          {
+            as_bad (_("%ld constant out of range:[0, %d]"),imm_expr->X_add_number, 3);
+            break;
+          }
+          ip->insn_opcode |= ENCODE_XL_ADDIBNE_SCALE(imm_expr->X_add_number);
+          as_warn (_("internal: invalid scale value %ld for xl.addibne "
+                    "Scale must be 1, 2, 4, 8. "), imm_expr->X_add_number);
+          ++oparg;
+
+        } else if (oparg[1]=='k') {
+          my_getExpression (imm_expr, asarg);
+          check_absolute_expr (ip, imm_expr, FALSE);
+          asarg = expr_end;
+          if (imm_expr->X_add_number<0 || imm_expr->X_add_number>31) break;
+          //ip->insn_opcode |= ENCODE_I5_1_TYPE_UIMM (imm_expr->X_add_number);
+          ip->insn_opcode |= ENCODE_XL_ADDIBNE_IMM(imm_expr->X_add_number);
           ++oparg;
         } else if (oparg[1]=='L') {
           ++oparg;
