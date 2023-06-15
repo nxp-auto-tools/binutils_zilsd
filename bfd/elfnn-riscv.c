@@ -1662,7 +1662,7 @@ perform_relocation (const reloc_howto_type *howto,
 	case R_RISCV_XL_ADDIBNE_BRANCH:
 	  if (!VALID_XL_ADDIBNE_IMM (-(long)value))
 	    return bfd_reloc_overflow;
-      value = ENCODE_XL_ADDIBNE_IMM (-(long)value);
+	  value = ~ENCODE_XL_ADDIBNE_IMM (-(long)value);
       break;
 
     case R_RISCV_RVC_BRANCH:

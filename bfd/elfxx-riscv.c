@@ -830,20 +830,6 @@ static reloc_howto_type howto_table[] =
 	 0xffffffff,			/* dst_mask */
 	 false),			/* pcrel_offset */
 
-  HOWTO (R_RISCV_XL_ADDIBNE_BRANCH,		/* type */
-	 0,				/* rightshift */
-	 -1,				/* size */
-	 32,				/* bitsize */
-	 true,				/* pc_relative */
-	 0,				/* bitpos */
-	 complain_overflow_dont,	/* complain_on_overflow */
-	 bfd_elf_generic_reloc,		/* special_function */
-	 "R_RISCV_XL_ADDIBNE_BRANCH",		/* name */
-	 false,				/* partial_inplace */
-	 0,				/* src_mask */
-	 ENCODE_XL_ADDIBNE_IMM (-1U),	/* dst_mask */
-	 true),				/* pcrel_offset */
-
   /* Relocation against a local ifunc symbol in a shared object.  */
   HOWTO (R_RISCV_IRELATIVE,		/* type */
 	 0,				/* rightshift */
@@ -858,6 +844,7 @@ static reloc_howto_type howto_table[] =
 	 0,				/* src_mask */
 	 0xffffffff,			/* dst_mask */
 	 false),			/* pcrel_offset */
+
   HOWTO (R_RISCV_XL_BMRK_BRANCH,		/* type */
 	 0,				/* rightshift */
 	 2,				/* size */
@@ -870,6 +857,20 @@ static reloc_howto_type howto_table[] =
 	 false,				/* partial_inplace */
 	 0,				/* src_mask */
 	 ENCODE_XLCZ_BMRK_IMM (-1U),	/* dst_mask */
+	 true),				/* pcrel_offset */
+
+  HOWTO (R_RISCV_XL_ADDIBNE_BRANCH,		/* type */
+	 0,				/* rightshift */
+	 -1,				/* size */
+	 32,				/* bitsize */
+	 true,				/* pc_relative */
+	 0,				/* bitpos */
+	 complain_overflow_dont,	/* complain_on_overflow */
+	 bfd_elf_generic_reloc,		/* special_function */
+	 "R_RISCV_XL_ADDIBNE_BRANCH",		/* name */
+	 false,				/* partial_inplace */
+	 0,				/* src_mask */
+	 ENCODE_XL_ADDIBNE_IMM (-1U),	/* dst_mask */
 	 true),				/* pcrel_offset */
 };
 
@@ -1950,6 +1951,15 @@ riscv_parse_check_conflicts (riscv_parse_subset_t *rps)
       rps->error_handler (_("rv%d does not support the `q' extension"), xlen);
       no_conflict = false;
     }
+  if (riscv_lookup_subset (rps->subset_list, "zcmp", &subset)
+      && ((riscv_lookup_subset (rps->subset_list, "c", &subset)
+	   && riscv_lookup_subset (rps->subset_list, "d", &subset))
+	  || riscv_lookup_subset (rps->subset_list, "zcd", &subset)))
+   {
+      rps->error_handler 
+	  (_ ("`zcmp' is conflict with the `c+d' / `zcd' extension"));
+      no_conflict = false;
+    }
   if (riscv_lookup_subset (rps->subset_list, "zfinx", &subset)
       && riscv_lookup_subset (rps->subset_list, "f", &subset))
     {
@@ -2837,16 +2847,15 @@ riscv_multi_subset_supports_ext (riscv_parse_subset_t *rps,
     }
 }
 
-/* get base sp adjustment */
+/* get sp base adjustment */
 
 int
-riscv_get_base_spimm (insn_t opcode, riscv_parse_subset_t *rps)
+riscv_get_sp_base (insn_t opcode, riscv_parse_subset_t *rps)
 {
-  unsigned sp_alignment = 16;
   unsigned reg_size = *(rps->xlen) / 8;
   unsigned rlist = EXTRACT_BITS (opcode, OP_MASK_RLIST, OP_SH_RLIST);
 
   unsigned min_sp_adj = (rlist - 3) * reg_size + (rlist == 15 ? reg_size : 0);
-  return ((min_sp_adj / sp_alignment) + (min_sp_adj % sp_alignment != 0))
-    * sp_alignment;
+  return ((min_sp_adj / SP_ALIGNMENT) + (min_sp_adj % SP_ALIGNMENT != 0))
+    * SP_ALIGNMENT;
 }

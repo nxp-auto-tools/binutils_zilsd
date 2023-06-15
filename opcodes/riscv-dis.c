@@ -276,7 +276,7 @@ print_rlist (disassemble_info *info, insn_t l)
 static int
 riscv_get_spimm (insn_t l)
 {
-  int spimm = riscv_get_base_spimm(l, &riscv_rps_dis);
+  int spimm = riscv_get_sp_base(l, &riscv_rps_dis);
 
   spimm += EXTRACT_ZCMP_SPIMM (l);
 
@@ -604,9 +604,8 @@ print_insn_args (const char *oparg, insn_t l, bfd_vma pc, disassemble_info *info
 			print (info->stream, dis_style_immediate, "%d", ((int) EXTRACT_XL_ADDIBNE_SCALE (l))&0x03);
 			break;
 		case 'k':
-			info->target = pc - EXTRACT_XL_ADDIBNE_IMM (l);
+			info->target = pc - (((-((EXTRACT_XL_ADDIBNE_IMM (l) >> 1) | 0xfffffe00)) - 1) << 1);
 			(*info->print_address_func) ((int)info->target, info);
-			++oparg;
 			break;
 		case 'L':
 			switch (*++oparg)

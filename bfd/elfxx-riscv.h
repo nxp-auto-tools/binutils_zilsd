@@ -26,6 +26,7 @@
 #include "cpu-riscv.h"
 
 #define RISCV_UNKNOWN_VERSION -1
+#define SP_ALIGNMENT 16
 
 extern reloc_howto_type *
 riscv_reloc_name_lookup (bfd *, const char *);
@@ -114,4 +115,5 @@ extern void
 bfd_elf64_riscv_set_data_segment_info (struct bfd_link_info *, int *);
 
 extern int
-riscv_get_base_spimm (insn_t, riscv_parse_subset_t *);
+riscv_get_sp_base (insn_t, riscv_parse_subset_t *);
+

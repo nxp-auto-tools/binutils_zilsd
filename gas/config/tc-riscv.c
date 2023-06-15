@@ -35,6 +35,7 @@
 
 #include <stdint.h>
 
+int md_flag_idx = 0;
 /* Information about an instruction, including its format, operands
    and fixups.  */
 struct riscv_cl_insn
@@ -285,6 +286,7 @@ struct riscv_set_options
   int relax; /* Emit relocs the linker is allowed to relax.  */
   int arch_attr; /* Emit architecture and privileged elf attributes.  */
   int csr_check; /* Enable the CSR checking.  */
+  int xl_addibne;
 };
 
 static struct riscv_set_options riscv_opts =
@@ -294,6 +296,7 @@ static struct riscv_set_options riscv_opts =
   1, /* relax */
   DEFAULT_RISCV_ATTR, /* arch_attr */
   0, /* csr_check */
+  1, /* xl addibne */
 };
 
 /* Enable or disable the rvc flags for riscv_opts.  Turn on the rvc flag
@@ -513,7 +516,7 @@ static bool explicit_priv_attr = false;
 static char *expr_end;
 
 /* Instruction pair combiner */
-static struct riscv_combiner *insn_combiner;
+static struct riscv_combiner *insn_combiner[256];
 
 /* Macros for encoding relaxation state for RVC branches and far jumps.  */
 #define RELAX_BRANCH_ENCODE(uncond, rvc, length)	\
@@ -1451,6 +1454,22 @@ flt_lookup (float f, const float *array, size_t size, unsigned *regnop)
   return false;
 }
 
+// addibne 
+static int
+riscv_xl_pack_addibne_scale (offsetT imm)
+{
+  switch (imm)
+    {
+    case 1: imm = 0b00; break;
+    case 2: imm = 0b01; break;
+    case 4: imm = 0b10; break;
+    case 8: imm = 0b11; break;
+    default:
+      return -1;
+    }
+  return imm;
+}
+
 #define USE_BITS(mask,shift) (used_bits |= ((insn_t)(mask) << (shift)))
 #define USE_IMM(n, s) \
   (used_bits |= ((insn_t)((1ull<<n)-1) << (s)))
@@ -1930,6 +1949,7 @@ append_insn (struct riscv_cl_insn *ip, expressionS *address_expr,
       gas_assert (address_expr);
       if (reloc_type == BFD_RELOC_12_PCREL
 	  || reloc_type == BFD_RELOC_RISCV_JMP
+    || reloc_type == BFD_RELOC_RISCV_XL_ADDIBNE
     || reloc_type == BFD_RELOC_RISCV_XL_BMRK)
 	{
 	  int j = reloc_type == BFD_RELOC_RISCV_JMP;
@@ -1984,177 +2004,168 @@ append_insn (struct riscv_cl_insn *ip, expressionS *address_expr,
 static bfd_boolean
 use_insn_combiner (void)
 {
-  return riscv_subset_supports (&riscv_rps_as, "zcmp");
+  return riscv_opts.xl_addibne;
 }
 
-/* Return TRUE if the insn is valid for the first insn in
-  instruction pair. */
 
+/* Return true if we insn combiner is used. */
 static bfd_boolean
-zcmp_mva01s_1 (const struct riscv_cl_insn *insn,
-	const expressionS *imm_expr ATTRIBUTE_UNUSED,
-	const bfd_reloc_code_real_type reloc_type ATTRIBUTE_UNUSED)
+use_combiner_p (void)
 {
-  int rd, rs2;
-
-  /* mv is replaced by c.mv in C ext  */
-  if (insn->insn_mo->match != MATCH_C_MV)
-    return FALSE;
-
-  rd = EXTRACT_OPERAND (RD, insn->insn_opcode);
-  rs2 = EXTRACT_OPERAND (CRS2, insn->insn_opcode);
-
-  return (rd == X_A0 || rd == X_A1)
-      && RISCV_SREG_0_7 (rs2);
+  return riscv_opts.xl_addibne;
 }
-
-static bfd_boolean
-zcmp_mvsa01_1 (const struct riscv_cl_insn *insn,
-	const expressionS *imm_expr ATTRIBUTE_UNUSED,
-	const bfd_reloc_code_real_type reloc_type ATTRIBUTE_UNUSED)
-{
-  int rd, rs2;
-
-  /* mv is replaced by c.mv in C ext  */
-  if (insn->insn_mo->match != MATCH_C_MV)
-    return FALSE;
-
-  rd = EXTRACT_OPERAND (RD, insn->insn_opcode);
-  rs2 = EXTRACT_OPERAND (CRS2, insn->insn_opcode);
-
-  return (rs2 == X_A0 || rs2 == X_A1)
-      && RISCV_SREG_0_7 (rd);
-}
-
-/* Return TRUE if the insn is valid for the second insn in
-  instruction pair. */
-
-static bfd_boolean
-zcmp_mva01s_2 (const struct riscv_cl_insn *insn,
-	const expressionS *imm_expr ATTRIBUTE_UNUSED,
-	const bfd_reloc_code_real_type reloc_type ATTRIBUTE_UNUSED)
-{
-  if (insn->insn_mo->match != MATCH_C_MV)
-    return FALSE;
-
-  int rd = EXTRACT_OPERAND (RD, insn->insn_opcode);
-  int rs2 = EXTRACT_OPERAND (CRS2, insn->insn_opcode);
-  int rd_cache = EXTRACT_OPERAND (RD, insn_combiner->insn.insn_opcode);
-
-  /* First check if rd does not equal the rd of cached c.mv insn,
-    and if rd is a0 or a1. */
-  if ((rd == rd_cache)
-      || (rd != X_A0 && rd != X_A1))
-    return FALSE;
-
-  /* Then we check if rs is s0-s7. */
-  return RISCV_SREG_0_7 (rs2);
-}
-
-static bfd_boolean
-zcmp_mvsa01_2 (const struct riscv_cl_insn *insn,
-	const expressionS *imm_expr ATTRIBUTE_UNUSED,
-	const bfd_reloc_code_real_type reloc_type ATTRIBUTE_UNUSED)
-{
-  if (insn->insn_mo->match != MATCH_C_MV)
-    return FALSE;
-
-  int rd = EXTRACT_OPERAND (RD, insn->insn_opcode);
-  int rs2 = EXTRACT_OPERAND (CRS2, insn->insn_opcode);
-  int rd_cache = EXTRACT_OPERAND (RD, insn_combiner->insn.insn_opcode);
-  int rs2_cache = EXTRACT_OPERAND (CRS2, insn_combiner->insn.insn_opcode);
-
-  /* First check if rs does not equal the rd of cached c.mv insn,
-    and if rs is a0 or a1. */
-  if ((rs2 == rs2_cache)
-      || (rs2 != X_A0 && rs2 != X_A1))
-    return FALSE;
-
-  /* Then we check if rd is s0-s7 and does not equal the
-    rd of cached c.mv insn.  */
-  return (rd != rd_cache)
-      && RISCV_SREG_0_7 (rd);
-}
-
-/* Write combined insn to the cached field in insn_combiner to append
-  later. */
-
-static bfd_boolean
-zcmp_mva01s_update (const struct riscv_cl_insn *insn,
-	const expressionS *imm_expr ATTRIBUTE_UNUSED,
-	const bfd_reloc_code_real_type reloc_type ATTRIBUTE_UNUSED)
-{
-  unsigned sreg1, sreg2;
-  struct riscv_cl_insn *cached_insn = &insn_combiner->insn;
-
-  unsigned rd = EXTRACT_OPERAND (RD, insn->insn_opcode);
-  unsigned rs2 = EXTRACT_OPERAND (CRS2, insn->insn_opcode);
-  unsigned rs2_cache = EXTRACT_OPERAND (CRS2, cached_insn->insn_opcode);
-
-  cached_insn->insn_opcode = MATCH_CM_MVA01S;
-
-  sreg1 = (rd == X_A0 ? rs2 : rs2_cache) % 8;
-  sreg2 = (rd == X_A0 ? rs2_cache : rs2) % 8;
-
-  INSERT_OPERAND (SREG1, *cached_insn, sreg1);
-  INSERT_OPERAND (SREG2, *cached_insn, sreg2);
-
-  return TRUE;
-}
-
-static bfd_boolean
-zcmp_mvsa01_update (const struct riscv_cl_insn *insn,
-	const expressionS *imm_expr ATTRIBUTE_UNUSED,
-	const bfd_reloc_code_real_type reloc_type ATTRIBUTE_UNUSED)
-{
-  unsigned sreg1, sreg2;
-  struct riscv_cl_insn *cached_insn = &insn_combiner->insn;
-
-  unsigned rd = EXTRACT_OPERAND (RD, insn->insn_opcode);
-  unsigned rd_cache = EXTRACT_OPERAND (RD, cached_insn->insn_opcode);
-  unsigned rs2 = EXTRACT_OPERAND (CRS2, insn->insn_opcode);
-
-  cached_insn->insn_opcode = MATCH_CM_MVSA01;
-
-  sreg1 = (rs2 == X_A0 ? rd : rd_cache) % 8;
-  sreg2 = (rs2 == X_A0 ? rd_cache : rd) % 8;
-
-  INSERT_OPERAND (SREG1, *cached_insn, sreg1);
-  INSERT_OPERAND (SREG2, *cached_insn, sreg2);
-  return TRUE;
-}
-
-/* Instruction pair matching table.  */
-
-static struct riscv_combiner_matcher riscv_comb_matchers [] = {
-  { zcmp_mva01s_1, zcmp_mva01s_2, zcmp_mva01s_update, use_insn_combiner },
-  { zcmp_mvsa01_1, zcmp_mvsa01_2, zcmp_mvsa01_update, use_insn_combiner },
-  { NULL, NULL, NULL, NULL },
-};
 
 /* Cache an instruction when it passes check function */
 
 static void
 cache_an_insn (struct riscv_cl_insn *insn,
 		    expressionS *imm_expr,
-		    bfd_reloc_code_real_type reloc_type)
+		    bfd_reloc_code_real_type reloc_type, int index)
 {
-  memcpy((void*)&(insn_combiner->imm_expr),
+  memcpy((void*)&(insn_combiner[index]->imm_expr),
       (void*)imm_expr, sizeof(expressionS));
-  memcpy((void*)&(insn_combiner->insn), (void*)insn,
+  memcpy((void*)&(insn_combiner[index]->insn), (void*)insn,
       sizeof(struct riscv_cl_insn));
-  insn_combiner->imm_reloc = reloc_type;
+  insn_combiner[index]->imm_reloc = reloc_type;
 }
+
+static bfd_boolean
+combiner_avail_xlcz (void)
+{
+   return riscv_subset_supports (&riscv_rps_as, "xxlcz");
+}
+
+static bfd_boolean
+riscv_xlcz_addibne_1 (struct riscv_cl_insn *insn, expressionS *imm_expr,
+	const bfd_reloc_code_real_type reloc_type)
+{
+  int rd, rs1, scale;
+
+  if (insn->insn_mo->match != MATCH_ADDI
+      && insn->insn_mo->match != MATCH_C_ADDI)
+    return FALSE;
+
+  rd = EXTRACT_OPERAND (RD, insn->insn_opcode);
+  rs1 =  EXTRACT_OPERAND (RS1, insn->insn_opcode);
+  scale = riscv_xl_pack_addibne_scale(imm_expr->X_add_number);
+
+  if (insn->insn_mo->match == MATCH_ADDI
+      && rd == rs1
+      && scale != -1)
+    {
+
+    }
+  else if (insn->insn_mo->match == MATCH_C_ADDI && scale != -1)
+    {
+      cache_an_insn (insn, imm_expr, reloc_type, 0);
+      return TRUE;
+    }
+    else
+    {
+
+    }
+  return FALSE;
+}
+
+static bfd_boolean
+riscv_xlcz_addibne_2 (struct riscv_cl_insn *insn,
+	expressionS *imm_expr ATTRIBUTE_UNUSED,
+	const bfd_reloc_code_real_type reloc_type ATTRIBUTE_UNUSED)
+{
+  int rd_addi;
+  if (insn->insn_mo->match != MATCH_BNE
+      && insn->insn_mo->match != MATCH_C_BNEZ)
+    return FALSE;
+
+  rd_addi = EXTRACT_OPERAND (RD, insn_combiner[0]->insn.insn_opcode);
+  
+ // as_warn(_("(int)EXTRACT_OPERAND (RS1, insn->insn_opcode) is %08x, %08x\n"), (int)EXTRACT_OPERAND (RS2, insn->insn_opcode), (int)EXTRACT_OPERAND (RD, insn->insn_opcode));
+  if (insn->insn_mo->match == MATCH_BNE
+      //&& EXTRACT_OPERAND (RS2, insn->insn_opcode) == 0
+      && (int)EXTRACT_OPERAND (RS1, insn->insn_opcode) == rd_addi)
+      {
+        return TRUE;
+      }
+  return FALSE;
+}
+
+static bfd_boolean
+riscv_xlcz_addibne_out (struct riscv_cl_insn *insn, expressionS *imm_expr,
+	const bfd_reloc_code_real_type imm_reloc)
+{
+  offsetT label_loc, insn_loc, offset;
+  int rd = EXTRACT_OPERAND (RD, insn_combiner[0]->insn.insn_opcode);
+  int scale = riscv_xl_pack_addibne_scale (
+                1 * insn_combiner[0]->imm_expr.X_add_number);
+
+  int rd_addi = EXTRACT_OPERAND (RD, insn_combiner[0]->insn.insn_opcode);
+  int xxc_rs = EXTRACT_OPERAND (RS2, insn->insn_opcode);
+
+  /* decrement should be -1, -2, -4, or -8 */
+  gas_assert (scale != -1);
+
+  /* c.decbnez only supports backward jump, so when offset is
+     an immediate, then it should be a negative */
+  if (imm_expr->X_op == O_constant
+      && imm_expr->X_add_number > 0
+      && VALID_XL_ADDIBNE_IMM (1*imm_expr->X_add_number))
+    {
+      insn->insn_opcode = MATCH_XL_ADDIBNE;
+      INSERT_OPERAND (C_SCALE, *insn, scale);
+      INSERT_OPERAND (CRS1S, *insn, rd-8);
+      return TRUE;
+    }
+
+  /* check if decbnez can be compressed to c.decbnez
+     when branch to a label.
+    1. addressing expr is a label
+    2. the label is located above the inst (if it is defined)
+    3. the length of offset to label is valid rd field
+    4. regno of rd ranges from 8 to 15
+  */
+  //if (riscv_subset_supports (&riscv_rps_as, "xxlcz")
+  if (imm_expr->X_op != O_constant
+      && S_IS_DEFINED (imm_expr->X_add_symbol))
+    {
+      label_loc = S_GET_VALUE (imm_expr->X_add_symbol);
+      insn_loc = frag_more (0) - frag_now->fr_literal;
+      offset = insn_loc - label_loc;
+          {
+            insn->insn_opcode = MATCH_XL_ADDIBNE;
+            INSERT_OPERAND (XL_SCALE, *insn, scale);
+            INSERT_OPERAND (RD, *insn, rd_addi);
+            INSERT_OPERAND (RS1, *insn, xxc_rs);   
+            return TRUE;
+          }
+    }
+  	insn->insn_opcode = MATCH_XL_ADDIBNE;
+    INSERT_OPERAND (XL_SCALE, *insn, scale);
+    INSERT_OPERAND (RD, *insn, rd_addi);
+    INSERT_OPERAND (RS1, *insn, xxc_rs);
+  return TRUE;
+}
+
+/* Instruction pair matching table.  */
+static struct riscv_combiner_matcher riscv_comb_matchers [] = {
+   { riscv_xlcz_addibne_1, riscv_xlcz_addibne_2, riscv_xlcz_addibne_out, combiner_avail_xlcz },
+   { NULL, NULL, NULL, NULL },
+};
 
 /* Initialize instruction pair combiner */
 
 static void
 init_insn_combiner (void)
 {
-  insn_combiner = (struct riscv_combiner *)
-	xmalloc (sizeof (struct riscv_combiner));
-  insn_combiner->idx = 0;
-  insn_combiner->matcher = riscv_comb_matchers;
+    if (!insn_combiner[0])
+    {
+      for(int ii = 0; ii < 256; ii++)
+      {
+        insn_combiner[ii] = (struct riscv_combiner *)
+	      xmalloc (sizeof (struct riscv_combiner));
+        insn_combiner[ii]->idx = 0;
+        insn_combiner[ii]->matcher = riscv_comb_matchers;
+      }
+    }
 }
 
 /* Return TRUE if combiner has cached one instruction.  */
@@ -2163,19 +2174,23 @@ static bfd_boolean
 has_cached_insn (void)
 {
   return use_insn_combiner ()
-      && insn_combiner
-      && insn_combiner->idx > 0;
+      && insn_combiner[0]
+      && insn_combiner[0]->idx > 0;
 }
 
 /* Append a cached instruction.  */
 
 static void
-release_cached_insn (void)
+release_cached_insn (int start)
 {
-  append_insn (&insn_combiner->insn,
-		&insn_combiner->imm_expr,
-		insn_combiner->imm_reloc);
-  insn_combiner->idx = 0;
+  for(int ii = start; ii <= md_flag_idx; ii++)
+  {
+    append_insn (&insn_combiner[ii]->insn,
+      &insn_combiner[ii]->imm_expr,
+      insn_combiner[ii]->imm_reloc);
+    insn_combiner[ii]->idx = 0;
+  }
+  md_flag_idx = 0;
 }
 
 /* Build an instruction created by a macro expansion.  This is passed
@@ -3465,7 +3480,7 @@ riscv_ip (char *str, struct riscv_cl_insn *ip, expressionS *imm_expr,
 			      imm_expr->X_add_number *= -1;
 		      /* subtract base stack adjust. */
 		      imm_expr->X_add_number -=
-			      riscv_get_base_spimm (ip->insn_opcode, &riscv_rps_as);
+			      riscv_get_sp_base (ip->insn_opcode, &riscv_rps_as);
 		      if (!VALID_ZCMP_SPIMM (imm_expr->X_add_number))
 			      break;
 		      ip->insn_opcode |=
@@ -4660,48 +4675,69 @@ void riscv_append_insn (struct riscv_cl_insn *insn, expressionS *imm_expr,
 {
   if (insn->insn_mo->pinfo == INSN_MACRO)
     {
+#if 0
       if (has_cached_insn ())
-	  release_cached_insn ();
+        release_cached_insn (0);
+#endif
       macro (insn, imm_expr, &imm_reloc);
       return;
     }
 
   if (use_insn_combiner ())
     {
-      struct riscv_combiner_matcher *matchers = insn_combiner->matcher;
+      //struct riscv_combiner_matcher *matchers = insn_combiner->matcher;
+      struct riscv_combiner_matcher *matchers = insn_combiner[0]->matcher;
       unsigned idx;
-
       /* if one insn is cached, we now check the second insn */
-      if (insn_combiner->idx)
+      if (insn_combiner[0]->idx)
 	{
-	  idx = insn_combiner->idx - 1;
+	  idx = insn_combiner[0]->idx - 1;
+     
+     if(insn->insn_mo->match == MATCH_BLTU)
+     {
+        release_cached_insn (0);
+        append_insn (insn, imm_expr, imm_reloc);
+        md_flag_idx = 0;
+        return;
+     }
 
-	  /* if successfully match a insn pair, we output the merged result */
-	  if (matchers[idx].check_2 (insn, imm_expr, imm_reloc))
+     if(md_flag_idx >= 32)
+     {
+        release_cached_insn (0);
+        append_insn (insn, imm_expr, imm_reloc);
+        md_flag_idx = 0;
+        return;
+     }
+
+     if (matchers[idx].check_2 (insn, imm_expr, imm_reloc))
 	    {
 	      matchers[idx].update (insn, imm_expr, imm_reloc);
-	      release_cached_insn ();
+	      release_cached_insn (1);
+        imm_reloc = BFD_RELOC_RISCV_XL_ADDIBNE;
+	      append_insn (insn, imm_expr, imm_reloc);
+        insn_combiner[0]->idx = 0;
+        md_flag_idx = 0;
 	      return;
 	    }
-
-	  release_cached_insn ();
+      md_flag_idx = md_flag_idx + 1;
+      cache_an_insn (insn, imm_expr, imm_reloc, md_flag_idx);
+      return;
 	}
 
-      gas_assert (insn_combiner->idx == 0);
-
+      gas_assert (insn_combiner[0]->idx == 0);
+      // 查找matchers列表
       for (idx = 0; matchers[idx].check_1 != NULL; idx++)
 	{
 	  if (!matchers[idx].avail())
 	    continue;
+
 	  if (matchers[idx].check_1 (insn, imm_expr, imm_reloc))
 	    {
-	      cache_an_insn (insn, imm_expr, imm_reloc);
-	      insn_combiner->idx = idx + 1;
-	      return;
+	      insn_combiner[0]->idx = idx + 1;
+        return;
 	    }
-	}
-    }
-
+	  }
+  }
   append_insn (insn, imm_expr, imm_reloc);
 }
 
@@ -5119,6 +5155,16 @@ md_apply_fix (fixS *fixP, valueT *valP, segT seg ATTRIBUTE_UNUSED)
 	}
       break;
 
+    case BFD_RELOC_RISCV_XL_ADDIBNE:
+      if (fixP->fx_addsy)
+	{
+	  /* Fill in a tentative value to improve objdump readability.  */
+	  bfd_vma target = S_GET_VALUE (fixP->fx_addsy) + *valP;
+	  bfd_vma delta = target - md_pcrel_from (fixP);
+	  bfd_putl32 (bfd_getl32 (buf) | (ENCODE_XL_ADDIBNE_IMM (-delta)), buf);
+	}
+      break;
+
     case BFD_RELOC_RISCV_XL_BMRK:
       if (fixP->fx_addsy)
 	{
@@ -5265,6 +5311,11 @@ s_riscv_option (int x ATTRIBUTE_UNUSED)
     riscv_opts.csr_check = true;
   else if (strcmp (name, "no-csr-check") == 0)
     riscv_opts.csr_check = false;
+  else if (strcmp (name, "xlcz-addibne") == 0)
+    {
+       //riscv_opts.xl_addibne = true;
+       init_insn_combiner ();
+    }
   else if (strncmp (name, "arch,", 5) == 0)
     {
       name += 5;
@@ -5539,6 +5590,37 @@ tc_gen_reloc (asection *section ATTRIBUTE_UNUSED, fixS *fixp)
   return reloc;
 }
 
+/* Implement TC_START_LABEL and md_cleanup. Release cache instruction
+   when assemble finished parsing input file or defining a label  */
+
+bfd_boolean
+riscv_cleanup (void)
+{
+
+#if 1
+    /* Assembly code can starts with label, but the combiner is initialized
+      when gas meets the first instruction. So we need to check the combiner
+      is initialized or not when call cleanup. */
+  if (use_combiner_p ()
+      && insn_combiner[0]
+      && (insn_combiner[0]->idx))
+    {
+      for(int ii = 0; ii <= md_flag_idx; ii++)
+      {
+        append_insn (&(insn_combiner[ii]->insn), &(insn_combiner[ii]->imm_expr), insn_combiner[ii]->imm_reloc);
+        insn_combiner[ii]->idx = 0;
+      }
+    }
+    md_flag_idx = 0;
+  return TRUE;
+#else
+  if (has_cached_insn ())
+    release_cached_insn (0);
+
+  return TRUE;
+#endif
+}
+
 int
 riscv_relax_frag (asection *sec, fragS *fragp, long stretch ATTRIBUTE_UNUSED)
 {
@@ -5588,6 +5670,13 @@ md_convert_frag_branch (fragS *fragp)
 	      insn = MATCH_BEQ | (rs1 << OP_SH_RS1);
 	    else if ((insn & MASK_C_BNEZ) == MATCH_C_BNEZ)
 	      insn = MATCH_BNE | (rs1 << OP_SH_RS1);
+      else if ((insn & MASK_XL_ADDIBNE) == MASK_XL_ADDIBNE)
+	      {
+	        insn = MATCH_XL_ADDIBNE
+		    | (rs1 << OP_SH_RD)
+		    | EXTRACT_OPERAND (XL_SCALE, insn) << OP_SH_XL_SCALE;
+	        exp.X_add_number *= -1;
+	      }
 	    else
 	      abort ();
 	    bfd_putl32 (insn, buf);
@@ -5604,8 +5693,13 @@ md_convert_frag_branch (fragS *fragp)
 
 	  case 2:
 	    /* Just keep the RVC branch.  */
-	    reloc = RELAX_BRANCH_UNCOND (fragp->fr_subtype)
-		    ? BFD_RELOC_RISCV_RVC_JUMP : BFD_RELOC_RISCV_RVC_BRANCH;
+      if ((insn & MASK_XL_ADDIBNE) == MATCH_XL_ADDIBNE)
+        {
+          reloc = BFD_RELOC_RISCV_XL_ADDIBNE;
+        }
+	    else
+        reloc = RELAX_BRANCH_UNCOND (fragp->fr_subtype)
+          ? BFD_RELOC_RISCV_RVC_JUMP : BFD_RELOC_RISCV_RVC_BRANCH;
 	    fixp = fix_new_exp (fragp, buf - (bfd_byte *)fragp->fr_literal,
 				2, &exp, false, reloc);
 	    buf += 2;
@@ -5623,8 +5717,15 @@ md_convert_frag_branch (fragS *fragp)
 
       /* Invert the branch condition.  Branch over the jump.  */
       insn = bfd_getl32 (buf);
-      insn ^= MATCH_BEQ ^ MATCH_BNE;
-      insn |= ENCODE_BTYPE_IMM (8);
+      if ((insn & MATCH_XL_ADDIBNE) != MATCH_XL_ADDIBNE)
+      {
+          insn ^= MATCH_BEQ ^ MATCH_BNE;
+          insn |= ENCODE_BTYPE_IMM (8);
+      }
+      else
+      {
+        insn |= ENCODE_XL_ADDIBNE_IMM (8);
+      }
       bfd_putl32 (insn, buf);
       buf += 4;
 
@@ -5639,7 +5740,11 @@ md_convert_frag_branch (fragS *fragp)
     case 4:
       insn = bfd_getl32 (buf);
       
-      if(((insn & MATCH_XL_ADDRCHK) == MATCH_XL_ADDRCHK) 
+      if((insn & MATCH_XL_ADDIBNE) == MATCH_XL_ADDIBNE)
+      {
+         reloc = BFD_RELOC_RISCV_XL_ADDIBNE;
+      }
+      else if(((insn & MATCH_XL_ADDRCHK) == MATCH_XL_ADDRCHK) 
             || ((insn & MATCH_XL_BEZM) == MATCH_XL_BEZM))
       {
          reloc = BFD_RELOC_RISCV_XL_BMRK;
@@ -5857,6 +5962,7 @@ riscv_write_out_attrs (void)
   bfd_elf_add_proc_attr_int (stdoutput, Tag_RISCV_priv_spec, versions[0]);
   bfd_elf_add_proc_attr_int (stdoutput, Tag_RISCV_priv_spec_minor, versions[1]);
   bfd_elf_add_proc_attr_int (stdoutput, Tag_RISCV_priv_spec_revision, versions[2]);
+  //as_warn("riscv_write_out_attrs4\n");
 }
 
 /* Add the default contents for the .riscv.attributes section.  */
@@ -5875,7 +5981,7 @@ bfd_boolean
 riscv_md_cleanup (void)
 {
   if (has_cached_insn ())
-    release_cached_insn ();
+    release_cached_insn (0);
 
   return TRUE;
 }
@@ -5886,9 +5992,31 @@ void
 riscv_md_finish (void)
 {
   if (use_insn_combiner ()
-	&& insn_combiner)
+	&& insn_combiner[0])
     {
-      free (insn_combiner);
+      md_flag_idx = 0;
+      for(int ii =0; ii < 256; ii++)
+      {
+        insn_combiner[ii]->idx = 0;
+        free (insn_combiner[ii]);
+      }
+
+    }
+  riscv_set_public_attributes ();
+}
+
+void
+riscv_md_end (void)
+{
+  if (use_insn_combiner ()
+	&& insn_combiner[0])
+    {
+      md_flag_idx = 0;
+      for(int ii =0; ii < 256; ii++)
+      {
+        insn_combiner[ii]->idx = 0;
+        free (insn_combiner[ii]);
+      }
     }
   riscv_set_public_attributes ();
 }

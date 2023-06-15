@@ -129,9 +129,32 @@ extern void riscv_elf_final_processing (void);
 extern void riscv_md_finish (void);
 extern int riscv_convert_symbolic_attribute (const char *);
 
+#define md_cleanup riscv_cleanup
+#define TC_START_LABEL(STR, NUL_CHAR, NEXT_CHAR)	\
+  (NEXT_CHAR == ':' && riscv_cleanup ())
+
+extern bfd_boolean riscv_cleanup (void);
+
+
+#if 0
+#define md_end riscv_md_end
+#define CONVERT_SYMBOLIC_ATTRIBUTE riscv_convert_symbolic_attribute
+
+extern void riscv_md_end (void);
+extern int riscv_convert_symbolic_attribute (const char *);
+
+#if 0
 #define md_cleanup riscv_md_cleanup
 #define TC_START_LABEL(STR, NUL_CHAR, NEXT_CHAR)	\
   (NEXT_CHAR == ':' && riscv_md_cleanup ())
+#else
+#define md_cleanup riscv_cleanup
+#define TC_START_LABEL(STR, NUL_CHAR, NEXT_CHAR)	\
+  (NEXT_CHAR == ':' && riscv_cleanup ())
+
+extern bfd_boolean riscv_cleanup (void);
+#endif
+#endif
 
 extern bfd_boolean riscv_md_cleanup (void);
 
