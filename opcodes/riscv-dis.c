@@ -558,11 +558,11 @@ print_insn_args (const char *oparg, insn_t l, bfd_vma pc, disassemble_info *info
 			break;
 		case 'B':
 			print (info->stream, dis_style_immediate, "%d",
-				((int) EXTRACT_XLCZ_LGPB_IMM (l))&0x3FFFF);
+				(int) EXTRACT_XLCZ_LGPB_IMM (l));
 			break;
 		case 'b':
 			print (info->stream, dis_style_immediate, "%d",
-				((int) EXTRACT_XLCZ_SGPB_IMM (l))&0x3FFFF);
+				(int) EXTRACT_XLCZ_SGPB_IMM (l));
 			break;
 		case 'c':
 			print (info->stream, dis_style_immediate, "%d",
@@ -570,11 +570,11 @@ print_insn_args (const char *oparg, insn_t l, bfd_vma pc, disassemble_info *info
 			break;
 		case 'D':
 			print (info->stream, dis_style_immediate, "%d",
-				((int) EXTRACT_XLCZ_LGPD_IMM (l))&0x3FFFF);
+				(int) EXTRACT_XLCZ_LGPD_IMM (l));
 			break;
 		case 'd':
 			print (info->stream, dis_style_immediate, "%d",
-				((int) EXTRACT_XLCZ_SGPD_IMM (l))&0x3FFFF);
+				(int) EXTRACT_XLCZ_SGPD_IMM (l));
 			break;
 		case 'F':
 			print (info->stream, dis_style_immediate, "%d",
@@ -582,11 +582,11 @@ print_insn_args (const char *oparg, insn_t l, bfd_vma pc, disassemble_info *info
 			break;
 		case 'H':
 			print (info->stream, dis_style_immediate, "%d",
-				((int) EXTRACT_XLCZ_LGPH_IMM (l))&0xFFFF);
+				(int) EXTRACT_XLCZ_LGPH_IMM (l));
 			break;
 		case 'h':
 			print (info->stream, dis_style_immediate, "%d",
-				((int) EXTRACT_XLCZ_SGPH_IMM (l))&0xFFFF);
+				(int) EXTRACT_XLCZ_SGPH_IMM (l));
 			break;
 		case 'i':
 			print (info->stream, dis_style_immediate, "%d",
@@ -603,10 +603,10 @@ print_insn_args (const char *oparg, insn_t l, bfd_vma pc, disassemble_info *info
 		case 'L':
 			switch (*++oparg)
 			{
-			case 'b':print (info->stream, dis_style_immediate, "%d", ((int) EXTRACT_XLCZ_LB_IMM (l))&0xFF); break;
-			case 'h':print (info->stream, dis_style_immediate, "%d", ((int) EXTRACT_XLCZ_LH_IMM (l))&0x1FF); break;
-			case 'w':print (info->stream, dis_style_immediate, "%d", ((int) EXTRACT_XLCZ_LW_IMM (l))&0x3FF); break;
-			case 'd':print (info->stream, dis_style_immediate, "%d", ((int) EXTRACT_XLCZ_LD_IMM (l))&0x7FF); break;
+			case 'b':print (info->stream, dis_style_immediate, "%d", (int) EXTRACT_XLCZ_LB_IMM (l)); break;
+			case 'h':print (info->stream, dis_style_immediate, "%d", (int) EXTRACT_XLCZ_LH_IMM (l)); break;
+			case 'w':print (info->stream, dis_style_immediate, "%d", (int) EXTRACT_XLCZ_LW_IMM (l)); break;
+			case 'd':print (info->stream, dis_style_immediate, "%d", (int) EXTRACT_XLCZ_LD_IMM (l)); break;
 			default:
 				break;
 			}
@@ -626,21 +626,21 @@ print_insn_args (const char *oparg, insn_t l, bfd_vma pc, disassemble_info *info
 		case 'S':
 			switch (*++oparg)
 			{
-			case 'b':print (info->stream, dis_style_immediate, "%d", ((int) EXTRACT_XLCZ_SB_IMM (l))&0xFF); break;
-			case 'h':print (info->stream, dis_style_immediate, "%d", ((int) EXTRACT_XLCZ_SH_IMM (l))&0x1FF); break;
-			case 'w':print (info->stream, dis_style_immediate, "%d", ((int) EXTRACT_XLCZ_SW_IMM (l))&0x3FF); break;
-			case 'd':print (info->stream, dis_style_immediate, "%d", ((int) EXTRACT_XLCZ_SD_IMM (l))&0x7FF); break;
+			case 'b':print (info->stream, dis_style_immediate, "%d", (int) EXTRACT_XLCZ_SB_IMM (l)); break;
+			case 'h':print (info->stream, dis_style_immediate, "%d", (int) EXTRACT_XLCZ_SH_IMM (l)); break;
+			case 'w':print (info->stream, dis_style_immediate, "%d", (int) EXTRACT_XLCZ_SW_IMM (l)); break;
+			case 'd':print (info->stream, dis_style_immediate, "%d", (int) EXTRACT_XLCZ_SD_IMM (l)); break;
 			default:
 				break;
 			}
 			break;
 		case 'W':
 			print (info->stream, dis_style_immediate, "%d",
-				((int) EXTRACT_XLCZ_LGPW_IMM (l))&0x1FFFF);
+				(int) EXTRACT_XLCZ_LGPW_IMM (l));
 			break;
 		case 'w':
 			print (info->stream, dis_style_immediate, "%d",
-				((int) EXTRACT_XLCZ_SGPW_IMM (l))&0x7FFF);
+				(int) EXTRACT_XLCZ_SGPW_IMM (l));
 			break;
 		}
 		break;

@@ -121,39 +121,39 @@ static inline unsigned int riscv_insn_length (insn_t insn)
 #define EXTRACT_I5_1_TYPE_UIMM(x) \
   (RV_X(x, 20, 5))
 #define EXTRACT_XLCZ_LB_IMM(x) \
-  (RV_X(x, 20, 8))
+  (RV_X(x, 20, 7) | (-RV_X(x, 27, 1) << 7))
 #define EXTRACT_XLCZ_LH_IMM(x) \
-  (RV_X(x, 20, 8) << 1)
+  ((RV_X(x, 20, 7) << 1) | (-RV_X(x, 27, 1) << 8))
 #define EXTRACT_XLCZ_LW_IMM(x) \
-  (RV_X(x, 20, 8) << 2)
+  ((RV_X(x, 20, 7) << 2) | (-RV_X(x, 27, 1) << 9))
 #define EXTRACT_XLCZ_LD_IMM(x) \
-  (RV_X(x, 20, 8) << 3)
+  ((RV_X(x, 20, 7) << 3) | (-RV_X(x, 27, 1) << 10))
 #define EXTRACT_XLCZ_SB_IMM(x) \
-  (RV_X(x, 7, 5) | (RV_X(x, 25, 3) << 5))
+  (RV_X(x, 7, 5) | (RV_X(x, 25, 2) << 5) | (-RV_X(x, 27, 1) << 7))
 #define EXTRACT_XLCZ_SH_IMM(x) \
-  ((RV_X(x, 7, 5) << 1) | (RV_X(x, 25, 3) << 6))
+  ((RV_X(x, 7, 5) << 1) | (RV_X(x, 25, 2) << 6) | (-RV_X(x, 27, 1) << 8))
 #define EXTRACT_XLCZ_SW_IMM(x) \
-  ((RV_X(x, 7, 5) << 2) | (RV_X(x, 25, 3) << 7))
+  ((RV_X(x, 7, 5) << 2) | (RV_X(x, 25, 2) << 7) | (-RV_X(x, 27, 1) << 9))
 #define EXTRACT_XLCZ_SD_IMM(x) \
-  ((RV_X(x, 7, 5) << 3) | (RV_X(x, 25, 3) << 8))
+  ((RV_X(x, 7, 5) << 3) | (RV_X(x, 25, 2) << 8) | (-RV_X(x, 27, 1) << 10))
 #define EXTRACT_XLCZ_BRI_CIMM(x) \
   (RV_X(x, 20, 4) | (-RV_X(x, 24, 1) << 4))
 #define EXTRACT_XLCZ_LGPB_IMM(x) \
-  (RV_X(x, 14, 16))
+  (RV_X(x, 14, 15) | (-RV_X(x, 29, 1) << 15))
 #define EXTRACT_XLCZ_LGPH_IMM(x) \
-  (RV_X(x, 15, 15) << 1)
+  ((RV_X(x, 15, 14) << 1) | (-RV_X(x, 29, 1) << 15))
 #define EXTRACT_XLCZ_LGPW_IMM(x) \
-  (RV_X(x, 15, 15) << 2)
+  ((RV_X(x, 15, 14) << 2) | (-RV_X(x, 29, 1) << 16))
 #define EXTRACT_XLCZ_LGPD_IMM(x) \
-  (RV_X(x, 15, 15) << 3)
+  ((RV_X(x, 15, 14) << 3) | (-RV_X(x, 29, 1) << 17))
 #define EXTRACT_XLCZ_SGPB_IMM(x) \
-  ((RV_X(x, 25, 5) << 11) | (RV_X(x, 14, 6) << 5) | (RV_X(x, 7, 5)))
+  ((RV_X(x, 25, 4) << 11) | (RV_X(x, 14, 6) << 5) | (RV_X(x, 7, 5)) | (-RV_X(x, 29, 1) << 15))
 #define EXTRACT_XLCZ_SGPH_IMM(x) \
-  ((RV_X(x, 25, 5) << 11) | (RV_X(x, 15, 5) << 6) | (RV_X(x, 7, 5) << 1))
+  ((RV_X(x, 25, 4) << 11) | (RV_X(x, 15, 5) << 6) | (RV_X(x, 7, 5) << 1) | (-RV_X(x, 29, 1) << 15))
 #define EXTRACT_XLCZ_SGPW_IMM(x) \
-  ((RV_X(x, 25, 5) << 12) | (RV_X(x, 15, 5) << 7) | (RV_X(x, 7, 5) << 2))
+  ((RV_X(x, 25, 4) << 12) | (RV_X(x, 15, 5) << 7) | (RV_X(x, 7, 5) << 2) | (-RV_X(x, 29, 1) << 16))
 #define EXTRACT_XLCZ_SGPD_IMM(x) \
-  ((RV_X(x, 25, 5) << 13) | (RV_X(x, 15, 5) << 8) | (RV_X(x, 7, 5) << 3))
+  ((RV_X(x, 25, 4) << 13) | (RV_X(x, 15, 5) << 8) | (RV_X(x, 7, 5) << 3) | (-RV_X(x, 29, 1) << 17))
 #define EXTRACT_XLCZ_MAC_IMM(x) \
   (RV_X(x, 20, 9))
 #define EXTRACT_XLCZ_BRI_OFST(x) \
