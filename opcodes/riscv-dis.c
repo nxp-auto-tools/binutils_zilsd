@@ -554,7 +554,7 @@ print_insn_args (const char *oparg, insn_t l, bfd_vma pc, disassemble_info *info
 			break;
 		case '8':
 			print (info->stream, dis_style_immediate, "%d",
-				((int) EXTRACT_XLCZ_BRI_CIMM (l))&0xFF);
+				((int) EXTRACT_XLCZ_BRI_CIMM (l)));
 			break;
 		case 'B':
 			print (info->stream, dis_style_immediate, "%d",
