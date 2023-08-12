@@ -2465,6 +2465,10 @@ riscv_multi_subset_supports (riscv_parse_subset_t *rps,
     case INSN_CLASS_ZFH_AND_ZFA:
       return riscv_subset_supports (rps, "zfh")
 	     && riscv_subset_supports (rps, "zfa");
+    case INSN_CLASS_ZFH_OR_ZVFH_AND_ZFA:
+      return (riscv_subset_supports (rps, "zfh")
+	      || riscv_subset_supports (rps, "zvfh"))
+	     && riscv_subset_supports (rps, "zfa");
     case INSN_CLASS_ZBA:
       return (riscv_subset_supports (rps, "zba") || riscv_subset_supports (rps, "b"));
     case INSN_CLASS_ZBB:
@@ -2737,6 +2741,17 @@ riscv_multi_subset_supports_ext (riscv_parse_subset_t *rps,
 	return "zfh";
       else
 	return "zfa";
+    case INSN_CLASS_ZFH_OR_ZVFH_AND_ZFA:
+      if (!riscv_subset_supports (rps, "zfa"))
+	{
+	  if (!riscv_subset_supports (rps, "zfh")
+	      && !riscv_subset_supports (rps, "zvfh"))
+	    return _("zfh' and `zfa', or `zvfh' and `zfa");
+	  else
+	    return "zfa";
+	}
+      else
+	return _("zfh' or `zvfh");
     case INSN_CLASS_ZBA:
       return "zba' or `b";
     case INSN_CLASS_ZBB:
