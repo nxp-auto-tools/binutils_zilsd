@@ -2004,7 +2004,7 @@ append_insn (struct riscv_cl_insn *ip, expressionS *address_expr,
 static bfd_boolean
 use_insn_combiner (void)
 {
-  return riscv_opts.xl_addibne;
+  return riscv_subset_supports (&riscv_rps_as, "xxlcz");
 }
 
 
@@ -2012,7 +2012,7 @@ use_insn_combiner (void)
 static bfd_boolean
 use_combiner_p (void)
 {
-  return riscv_opts.xl_addibne;
+  return riscv_subset_supports (&riscv_rps_as, "xxlcz");
 }
 
 /* Cache an instruction when it passes check function */
@@ -5311,7 +5311,7 @@ s_riscv_option (int x ATTRIBUTE_UNUSED)
     riscv_opts.csr_check = true;
   else if (strcmp (name, "no-csr-check") == 0)
     riscv_opts.csr_check = false;
-  else if (strcmp (name, "xlcz-addibne") == 0)
+  else if (riscv_subset_supports (&riscv_rps_as, "xxlcz"))
     {
        //riscv_opts.xl_addibne = true;
        init_insn_combiner ();
