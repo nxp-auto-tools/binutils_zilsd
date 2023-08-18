@@ -2479,6 +2479,9 @@ riscv_multi_subset_supports (riscv_parse_subset_t *rps,
               || riscv_subset_supports (rps, "xxldsp") || riscv_subset_supports (rps, "xxldspn1x")
               || riscv_subset_supports (rps, "xxldspn2x") || riscv_subset_supports (rps, "xxldspn3x"));
 
+    case INSN_CLASS_XXLDSP:
+      return (riscv_subset_supports (rps, "xxldsp") || riscv_subset_supports (rps, "xxldspn1x")
+              || riscv_subset_supports (rps, "xxldspn2x") || riscv_subset_supports (rps, "xxldspn3x"));
     case INSN_CLASS_XXLDSPN1X:
       return (riscv_subset_supports (rps, "xxldspn1x")|| riscv_subset_supports (rps, "xxldspn2x") 
               || riscv_subset_supports (rps, "xxldspn3x"));
