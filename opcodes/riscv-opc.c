@@ -2702,8 +2702,6 @@ const struct riscv_opcode riscv_opcodes[] =
 {"dsmaxda16"  , 0, INSN_CLASS_XXLDSPN3X, "d,s,t", MATCH_DSMAXDA16  , MASK_DSMAXDA16     , match_opcode, 0},
 {"dksms32.u"  , 0, INSN_CLASS_XXLDSPN3X, "d,s,t", MATCH_DKSMS32_U  , MASK_DKSMS32_U     , match_opcode, 0},
 {"dmada32"  ,   0, INSN_CLASS_XXLDSPN3X, "d,s,t", MATCH_DMADA32   , MASK_DMADA32       , match_opcode, 0},
-{"dreda32",    64, INSN_CLASS_XXLDSPN3X, "d,s",   MATCH_DREDA32, MASK_DREDA32, match_opcode, 0 },
-{"dreds32",    64, INSN_CLASS_XXLDSPN3X, "d,s",   MATCH_DREDS32, MASK_DREDS32, match_opcode, 0 },
 {"dsma32.u" ,   0, INSN_CLASS_XXLDSPN3X, "d,s,t", MATCH_DSMA32_U , MASK_DSMA32_U       ,match_opcode, 0},
 {"dsmxs32.u"  , 0, INSN_CLASS_XXLDSPN3X, "d,s,t", MATCH_DSMXS32_U  , MASK_DSMXS32_U     , match_opcode, 0},
 {"dsmxa32.u"  , 0, INSN_CLASS_XXLDSPN3X, "d,s,t", MATCH_DSMXA32_U , MASK_DSMXA32_U    , match_opcode, 0},

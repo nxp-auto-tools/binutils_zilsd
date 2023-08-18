@@ -1522,10 +1522,6 @@
 #define MASK_DREDAS16   0xfff0707f
 #define MATCH_DREDSA16  0x0c30007b
 #define MASK_DREDSA16   0xfff0707f
-#define MATCH_DREDA32   0x0c40007b
-#define MASK_DREDA32    0xfff0707f
-#define MATCH_DREDS32   0x0c50007b
-#define MASK_DREDS32    0xfff0707f
 #define MATCH_DSMA32_U  0xd000007b
 #define MASK_DSMA32_U   0xfe00707f
 #define MATCH_DSMXS32_U 0xd200007b
