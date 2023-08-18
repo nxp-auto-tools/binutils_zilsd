@@ -4701,6 +4701,14 @@ void riscv_append_insn (struct riscv_cl_insn *insn, expressionS *imm_expr,
         return;
      }
 
+     if(insn->insn_mo->match == MATCH_C_J)
+     {
+        release_cached_insn (0);
+        append_insn (insn, imm_expr, imm_reloc);
+        md_flag_idx = 0;
+        return;
+     }
+
      if(md_flag_idx >= 32)
      {
         release_cached_insn (0);
@@ -4753,8 +4761,7 @@ md_assemble (char *str)
   if (!start_assemble)
     {
       start_assemble = true;
-      /* Initialize instruction pair combiner for cm.mva01s
-	and cm.mvsa01*/
+
       if (use_insn_combiner ())
 	init_insn_combiner ();
 
