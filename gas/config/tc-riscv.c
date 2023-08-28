@@ -2051,11 +2051,11 @@ riscv_xlcz_addibne_1 (struct riscv_cl_insn *insn, expressionS *imm_expr,
 
   if (insn->insn_mo->match == MATCH_ADDI
       && rd == rs1
-      && scale != -1)
+      && scale != -1 && rd >= 8)
     {
 
     }
-  else if (insn->insn_mo->match == MATCH_C_ADDI && scale != -1)
+  else if (insn->insn_mo->match == MATCH_C_ADDI && scale != -1 && rd >= 8)
     {
       cache_an_insn (insn, imm_expr, reloc_type, 0);
       return TRUE;
@@ -3103,12 +3103,6 @@ riscv_ip (char *str, struct riscv_cl_insn *ip, expressionS *imm_expr,
 		  if (!insn->match_func (insn, ip->insn_opcode))
 		    break;
 
-		  /* For .insn, insn->match and insn->mask are 0.  */
-		  if (riscv_insn_length ((insn->match == 0 && insn->mask == 0)
-					 ? ip->insn_opcode
-					 : insn->match) == 2
-		      && (!riscv_opts.rvc && !riscv_subset_supports (&riscv_rps_as, "xxlcz")))
-		    break;
 
 		  if (riscv_is_priv_insn (ip->insn_opcode))
 		    explicit_priv_attr = true;
@@ -4673,13 +4667,25 @@ static
 void riscv_append_insn (struct riscv_cl_insn *insn, expressionS *imm_expr,
   bfd_reloc_code_real_type imm_reloc)
 {
+  int mask = insn->insn_mo->mask;
+
   if (insn->insn_mo->pinfo == INSN_MACRO)
     {
-#if 0
-      if (has_cached_insn ())
-        release_cached_insn (0);
-#endif
+      if(mask == M_CALL)
+      {
+        if (use_insn_combiner ())
+        {
+          if (insn_combiner[0]->idx)
+          {
+            release_cached_insn (0);
+            macro (insn, imm_expr, &imm_reloc);
+            md_flag_idx = 0;
+            return;
+          }
+        }
+      }
       macro (insn, imm_expr, &imm_reloc);
+ 
       return;
     }
 
@@ -4701,7 +4707,7 @@ void riscv_append_insn (struct riscv_cl_insn *insn, expressionS *imm_expr,
         return;
      }
 
-     if(insn->insn_mo->match == MATCH_C_J)
+     if((insn->insn_mo->match == MATCH_C_J) || (insn->insn_mo->match == MATCH_C_JAL))
      {
         release_cached_insn (0);
         append_insn (insn, imm_expr, imm_reloc);
