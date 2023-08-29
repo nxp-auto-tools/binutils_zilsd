@@ -286,7 +286,6 @@ struct riscv_set_options
   int relax; /* Emit relocs the linker is allowed to relax.  */
   int arch_attr; /* Emit architecture and privileged elf attributes.  */
   int csr_check; /* Enable the CSR checking.  */
-  int xl_addibne;
 };
 
 static struct riscv_set_options riscv_opts =
@@ -296,7 +295,6 @@ static struct riscv_set_options riscv_opts =
   1, /* relax */
   DEFAULT_RISCV_ATTR, /* arch_attr */
   0, /* csr_check */
-  1, /* xl addibne */
 };
 
 /* Enable or disable the rvc flags for riscv_opts.  Turn on the rvc flag
@@ -5324,11 +5322,6 @@ s_riscv_option (int x ATTRIBUTE_UNUSED)
     riscv_opts.csr_check = true;
   else if (strcmp (name, "no-csr-check") == 0)
     riscv_opts.csr_check = false;
-  else if (riscv_subset_supports (&riscv_rps_as, "xxlcz"))
-    {
-       //riscv_opts.xl_addibne = true;
-       init_insn_combiner ();
-    }
   else if (strncmp (name, "arch,", 5) == 0)
     {
       name += 5;
