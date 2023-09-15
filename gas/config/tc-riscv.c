@@ -6170,19 +6170,71 @@ riscv_elf_copy_symbol_attributes (symbolS *dest, symbolS *src)
     }
 }
 
+
+static void
+cons_break_addibne (int x ATTRIBUTE_UNUSED)
+{
+    if (use_insn_combiner ())
+    {
+      if(insn_combiner[0] != NULL)
+      {
+        if (insn_combiner[0]->idx)
+        {
+            release_cached_insn (0);
+            md_flag_idx = 0;
+          }
+      }
+    }
+    cons(x);
+}
+
+static void
+insn_break_addibne (int x ATTRIBUTE_UNUSED)
+{
+    if (use_insn_combiner ())
+    {
+      if(insn_combiner[0] != NULL)
+      {
+        if (insn_combiner[0]->idx)
+        {
+            release_cached_insn (0);
+            md_flag_idx = 0;
+        }
+      }
+    }
+    s_riscv_insn(x);
+}
+
+static void
+option_break_addibne (int x ATTRIBUTE_UNUSED)
+{
+    if (use_insn_combiner ())
+    {
+      if(insn_combiner[0] != NULL)
+      {
+        if (insn_combiner[0]->idx)
+        {
+            release_cached_insn (0);
+            md_flag_idx = 0;
+        }
+      }
+    }
+    s_riscv_option(x);
+}
+
 /* RISC-V pseudo-ops table.  */
 static const pseudo_typeS riscv_pseudo_table[] =
 {
-  {"option", s_riscv_option, 0},
-  {"half", cons, 2},
-  {"word", cons, 4},
-  {"dword", cons, 8},
+  {"option", option_break_addibne, 0},
+  {"half", cons_break_addibne, 2},
+  {"word", cons_break_addibne, 4},
+  {"dword", cons_break_addibne, 8},
   {"dtprelword", s_dtprel, 4},
   {"dtpreldword", s_dtprel, 8},
   {"bss", s_bss, 0},
   {"uleb128", s_riscv_leb128, 0},
   {"sleb128", s_riscv_leb128, 1},
-  {"insn", s_riscv_insn, 0},
+  {"insn", insn_break_addibne, 0},
   {"attribute", s_riscv_attribute, 0},
   {"variant_cc", s_variant_cc, 0},
   {"float16", float_cons, 'h'},
