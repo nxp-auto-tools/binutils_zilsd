@@ -2070,6 +2070,7 @@ riscv_xlcz_addibne_2 (struct riscv_cl_insn *insn,
 	expressionS *imm_expr ATTRIBUTE_UNUSED,
 	const bfd_reloc_code_real_type reloc_type ATTRIBUTE_UNUSED)
 {
+  offsetT label_loc, insn_loc, offset;
   int rd_addi;
   if (insn->insn_mo->match != MATCH_BNE
       && insn->insn_mo->match != MATCH_C_BNEZ)
@@ -2077,12 +2078,29 @@ riscv_xlcz_addibne_2 (struct riscv_cl_insn *insn,
 
   rd_addi = EXTRACT_OPERAND (RD, insn_combiner[0]->insn.insn_opcode);
   
- // as_warn(_("(int)EXTRACT_OPERAND (RS1, insn->insn_opcode) is %08x, %08x\n"), (int)EXTRACT_OPERAND (RS2, insn->insn_opcode), (int)EXTRACT_OPERAND (RD, insn->insn_opcode));
   if (insn->insn_mo->match == MATCH_BNE
-      //&& EXTRACT_OPERAND (RS2, insn->insn_opcode) == 0
       && (int)EXTRACT_OPERAND (RS1, insn->insn_opcode) == rd_addi)
       {
-        return TRUE;
+        if (imm_expr->X_op != O_constant
+            && S_IS_DEFINED (imm_expr->X_add_symbol))
+        {
+            label_loc = S_GET_VALUE (imm_expr->X_add_symbol);
+            insn_loc = frag_more (0) - frag_now->fr_literal;
+            offset = insn_loc - label_loc;
+
+            if(offset <= 0)
+            {
+              return TRUE;
+            }
+            else
+            {
+              return FALSE;
+            }
+          }
+          else
+          {
+            return FALSE;
+          }
       }
   return FALSE;
 }
