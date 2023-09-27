@@ -3322,6 +3322,18 @@
 #define MASK_XL_SGP_W      0xc000707f
 #define MATCH_XL_ADDIBNE   0x8000707b
 #define MASK_XL_ADDIBNE    0x8000707f
+#define MATCH_XL_FLH       0x5000507b
+#define MASK_XL_FLH        0xf000707f
+#define MATCH_XL_FLW       0x6000507b
+#define MASK_XL_FLW        0xf000707f
+#define MATCH_XL_FLD       0x7000507b
+#define MASK_XL_FLD        0xf000707f
+#define MATCH_XL_FSH       0xd000507b
+#define MASK_XL_FSH        0xf000707f
+#define MATCH_XL_FSW       0xe000507b
+#define MASK_XL_FSW        0xf000707f
+#define MATCH_XL_FSD       0xf000507b
+#define MASK_XL_FSD        0xf000707f
 
 /* Xxlcz instructions(RV64 only) */
 #define MATCH_XL_LWU       0x8000107b

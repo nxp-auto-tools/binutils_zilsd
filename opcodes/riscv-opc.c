@@ -2054,6 +2054,12 @@ const struct riscv_opcode riscv_opcodes[] =
 {"xl.lwu",   64, INSN_CLASS_XXLCZ_PSTINC, "d,bLw(s)", MATCH_XL_LWU, MASK_XL_LWU, match_opcode, 0 },
 {"xl.ld",    64, INSN_CLASS_XXLCZ_PSTINC, "d,bLd(s)", MATCH_XL_LD, MASK_XL_LD, match_opcode, 0 },
 {"xl.sd",    64, INSN_CLASS_XXLCZ_PSTINC, "t,bSd(s)", MATCH_XL_SD, MASK_XL_SD, match_opcode, 0 },
+{"xl.flh",     0, INSN_CLASS_XXLCZ_PSTINC, "D,bLh(s)", MATCH_XL_FLH, MASK_XL_FLH, match_opcode, INSN_DREF|INSN_4_BYTE },
+{"xl.flw",     0, INSN_CLASS_XXLCZ_PSTINC, "D,bLw(s)", MATCH_XL_FLW, MASK_XL_FLW, match_opcode, INSN_DREF|INSN_4_BYTE },
+{"xl.fld",     0, INSN_CLASS_XXLCZ_PSTINC, "D,bLd(s)", MATCH_XL_FLD, MASK_XL_FLD, match_opcode, INSN_DREF|INSN_4_BYTE },
+{"xl.fsh",     0, INSN_CLASS_XXLCZ_PSTINC, "T,bSh(s)", MATCH_XL_FSH, MASK_XL_FSH, match_opcode, INSN_DREF|INSN_4_BYTE },
+{"xl.fsw",     0, INSN_CLASS_XXLCZ_PSTINC, "T,bSw(s)", MATCH_XL_FSW, MASK_XL_FSW, match_opcode, INSN_DREF|INSN_4_BYTE },
+{"xl.fsd",     0, INSN_CLASS_XXLCZ_PSTINC, "T,bSd(s)", MATCH_XL_FSD, MASK_XL_FSD, match_opcode, INSN_DREF|INSN_4_BYTE },
 
 {"xl.abs",       0, INSN_CLASS_XXLCZ_ABS, "d,s", MATCH_XL_ABS, MASK_XL_ABS, match_opcode, 0 },
 
