@@ -2049,11 +2049,11 @@ riscv_xlcz_addibne_1 (struct riscv_cl_insn *insn, expressionS *imm_expr,
 
   if (insn->insn_mo->match == MATCH_ADDI
       && rd == rs1
-      && scale != -1 && rd >= 8)
+      && scale != -1 && rd >= 5)
     {
 
     }
-  else if (insn->insn_mo->match == MATCH_C_ADDI && scale != -1 && rd >= 8)
+  else if (insn->insn_mo->match == MATCH_C_ADDI && scale != -1 && rd >= 5)
     {
       cache_an_insn (insn, imm_expr, reloc_type, 0);
       return TRUE;
@@ -2079,7 +2079,7 @@ riscv_xlcz_addibne_2 (struct riscv_cl_insn *insn,
   rd_addi = EXTRACT_OPERAND (RD, insn_combiner[0]->insn.insn_opcode);
   
   if (insn->insn_mo->match == MATCH_BNE
-      && (int)EXTRACT_OPERAND (RS1, insn->insn_opcode) == rd_addi)
+      && (((int)EXTRACT_OPERAND (RS1, insn->insn_opcode) == rd_addi) || (((int)EXTRACT_OPERAND (RS2, insn->insn_opcode) == rd_addi) && md_flag_idx == 0)))
       {
         if (imm_expr->X_op != O_constant
             && S_IS_DEFINED (imm_expr->X_add_symbol))
@@ -2115,7 +2115,16 @@ riscv_xlcz_addibne_out (struct riscv_cl_insn *insn, expressionS *imm_expr,
                 1 * insn_combiner[0]->imm_expr.X_add_number);
 
   int rd_addi = EXTRACT_OPERAND (RD, insn_combiner[0]->insn.insn_opcode);
-  int xxc_rs = EXTRACT_OPERAND (RS2, insn->insn_opcode);
+  int xxc_rs;
+  
+  if((int)EXTRACT_OPERAND (RS2, insn->insn_opcode) == rd_addi)
+  {
+    xxc_rs =EXTRACT_OPERAND (RS1, insn->insn_opcode);
+  }
+  else
+  {
+    xxc_rs =EXTRACT_OPERAND (RS2, insn->insn_opcode);
+  }
 
   /* decrement should be -1, -2, -4, or -8 */
   gas_assert (scale != -1);
@@ -4128,17 +4137,18 @@ riscv_ip (char *str, struct riscv_cl_insn *ip, expressionS *imm_expr,
             break;
           }
           ip->insn_opcode |= ENCODE_XL_ADDIBNE_SCALE(imm_expr->X_add_number);
-          as_warn (_("internal: invalid scale value %ld for xl.addibne "
-                    "Scale must be 1, 2, 4, 8. "), imm_expr->X_add_number);
           ++oparg;
 
         } else if (oparg[1]=='k') {
           my_getExpression (imm_expr, asarg);
           check_absolute_expr (ip, imm_expr, FALSE);
           asarg = expr_end;
-          if (imm_expr->X_add_number<0 || imm_expr->X_add_number>31) break;
-          //ip->insn_opcode |= ENCODE_I5_1_TYPE_UIMM (imm_expr->X_add_number);
-          ip->insn_opcode |= ENCODE_XL_ADDIBNE_IMM(imm_expr->X_add_number);
+          if (imm_expr->X_add_number<0 || imm_expr->X_add_number>1024) 
+          {
+            as_bad (_("%ld constant out of range:[1, %d] << 20"),imm_expr->X_add_number, 9);
+            break;
+          }
+          ip->insn_opcode |= ENCODE_XL_ADDIBNE_IMM(~(imm_expr->X_add_number) + 1);
           ++oparg;
         } else if (oparg[1]=='L') {
           ++oparg;

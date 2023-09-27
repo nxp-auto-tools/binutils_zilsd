@@ -604,7 +604,7 @@ print_insn_args (const char *oparg, insn_t l, bfd_vma pc, disassemble_info *info
 			print (info->stream, dis_style_immediate, "%d", ((int) EXTRACT_XL_ADDIBNE_SCALE (l))&0x03);
 			break;
 		case 'k':
-			info->target = pc - (((-((EXTRACT_XL_ADDIBNE_IMM (l) >> 1) | 0xfffffe00)) - 1) << 1);
+			info->target = pc - (((int) (~EXTRACT_XL_ADDIBNE_IMM (l)) + 1)&0x3FF);
 			(*info->print_address_func) ((int)info->target, info);
 			break;
 		case 'L':
