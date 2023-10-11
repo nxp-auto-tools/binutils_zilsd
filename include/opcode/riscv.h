@@ -161,7 +161,7 @@ static inline unsigned int riscv_insn_length (insn_t insn)
 #define EXTRACT_XLCZ_BITREV_UIMM3(x) \
   (RV_X(x, 25, 2))
 #define EXTRACT_XLCZ_BMRK_IMM(x) \
-  ((RV_X(x, 25, 6) << 5) | (RV_X(x, 8, 4) << 1) | (RV_X(x, 7, 1) << 11))
+  ((RV_X(x, 25, 6) << 5) | (RV_X(x, 8, 4) << 1) | (-RV_X(x, 7, 1) << 11))
 #define EXTRACT_XLCZ_DECBNEZ_IMM(x) \
   (RV_X(x, 15, 10) << 1)
 #define EXTRACT_XLCZ_DECBNEZ_SCALE(x) \
