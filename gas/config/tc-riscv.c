@@ -34,6 +34,7 @@
 #include "opcode/riscv.h"
 
 #include <stdint.h>
+#include <limits.h>
 
 int md_flag_idx = 0;
 /* Information about an instruction, including its format, operands
@@ -4677,6 +4678,9 @@ static
 void riscv_append_insn (struct riscv_cl_insn *insn, expressionS *imm_expr,
   bfd_reloc_code_real_type imm_reloc)
 {
+  long temp = 0;
+  int local_label_step = 0;
+  char *next_char = (input_line_pointer + 1);
   int mask = insn->insn_mo->mask;
 
   if (insn->insn_mo->pinfo == INSN_MACRO)
@@ -4731,6 +4735,48 @@ void riscv_append_insn (struct riscv_cl_insn *insn, expressionS *imm_expr,
         append_insn (insn, imm_expr, imm_reloc);
         md_flag_idx = 0;
         return;
+     }
+
+    /*
+    The logic for determining local labels in RISC-V involves setting LOCAL_LABELS_FB=1. 
+    This allows the use of internal labels in handwritten RISC-V assembly code. 
+    When Binutils parses instructions, 
+    it can utilize the global variable input_line_pointer to 
+    check whether the next line represents an internal label.
+    */
+     while (ISDIGIT (*next_char))
+     {
+        local_label_step = 1;
+        const long digit = *next_char - '0';
+        if (temp > (INT_MAX - digit) / 10)
+        {
+          if((*next_char == ':'))
+          {
+            as_bad (_("local label too large"));
+          }
+          temp = -1;
+          break;
+        }
+        temp = temp * 10 + digit;
+        next_char = next_char + 1;
+     }
+
+     //When parsing reaches the end of a line, it indicates a match with a local label.
+     // LOCAL_LABELS_FB = 1 next_char is :
+     // LOCAL_LABELS_DOLLAR =1. .local_label: is .local_label$:
+     if(local_label_step)
+     {
+        if((*next_char == ':') || ((*next_char == '$') && (*(next_char+1) == ':')))
+        {
+            // maybe local label is 0 ok
+            if(temp >= 0)
+            {
+              release_cached_insn (0);
+              append_insn (insn, imm_expr, imm_reloc);
+              md_flag_idx = 0;
+              return;
+            }
+        }
      }
 
      if (matchers[idx].check_2 (insn, imm_expr, imm_reloc))
