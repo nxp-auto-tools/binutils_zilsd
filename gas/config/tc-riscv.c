@@ -4675,12 +4675,31 @@ riscv_ip_hardcode (char *str,
 }
 
 static
+char* trim_left(char *str)
+{
+    int start = 0;
+    while (str[start] != '\0' && (str[start] == ' ' || str[start] == '\t' || str[start] == '\n')) {
+        start++;
+    }
+
+    int outputLength = strlen(str) - start + 1;
+
+    char *output = (char *)malloc(outputLength);
+
+    if (output) {
+        strcpy(output, str + start);
+    }
+
+    return output;
+}
+
+static
 void riscv_append_insn (struct riscv_cl_insn *insn, expressionS *imm_expr,
   bfd_reloc_code_real_type imm_reloc)
 {
   long temp = 0;
   int local_label_step = 0;
-  char *next_char = (input_line_pointer + 1);
+  char *input_char = (input_line_pointer + 1);
   int mask = insn->insn_mo->mask;
 
   if (insn->insn_mo->pinfo == INSN_MACRO)
@@ -4736,7 +4755,8 @@ void riscv_append_insn (struct riscv_cl_insn *insn, expressionS *imm_expr,
         md_flag_idx = 0;
         return;
      }
-
+    
+    char *next_char = trim_left(input_char);
     /*
     The logic for determining local labels in RISC-V involves setting LOCAL_LABELS_FB=1. 
     This allows the use of internal labels in handwritten RISC-V assembly code. 
