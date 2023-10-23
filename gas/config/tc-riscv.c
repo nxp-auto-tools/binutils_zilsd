@@ -4702,25 +4702,22 @@ void riscv_append_insn (struct riscv_cl_insn *insn, expressionS *imm_expr,
   char *input_char = (input_line_pointer + 1);
   int mask = insn->insn_mo->mask;
 
+  //Instruction is actually a macro, exit the matching logic for addibne
   if (insn->insn_mo->pinfo == INSN_MACRO)
-    {
-      if(mask == M_CALL)
+  {
+      if (use_insn_combiner ())
       {
-        if (use_insn_combiner ())
+        if (insn_combiner[0]->idx)
         {
-          if (insn_combiner[0]->idx)
-          {
-            release_cached_insn (0);
-            macro (insn, imm_expr, &imm_reloc);
-            md_flag_idx = 0;
-            return;
-          }
+          release_cached_insn (0);
+          macro (insn, imm_expr, &imm_reloc);
+          md_flag_idx = 0;
+          return;
         }
       }
       macro (insn, imm_expr, &imm_reloc);
- 
       return;
-    }
+  }
 
   if (use_insn_combiner ())
     {
