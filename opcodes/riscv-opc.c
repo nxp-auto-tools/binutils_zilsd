@@ -2098,7 +2098,7 @@ const struct riscv_opcode riscv_opcodes[] =
 
 {"xl.beqi",    0, INSN_CLASS_XXLCZ_BRI, "s,b8,p", MATCH_XL_BEQI, MASK_XL_BEQI, match_opcode, INSN_BRANCH },
 {"xl.bnei",    0, INSN_CLASS_XXLCZ_BRI, "s,b8,p", MATCH_XL_BNEI, MASK_XL_BNEI, match_opcode, INSN_BRANCH },
-{"xl.decbnez", 0, INSN_CLASS_XXLCZ_BRI, "d,bJ,bj", MATCH_XL_DECBNEZ, MASK_XL_DECBNEZ, match_opcode, 0 },
+{"xl.decbnez", 0, INSN_CLASS_XXLCZ_BRI, "d,bJ,bj", MATCH_XL_DECBNEZ, MASK_XL_DECBNEZ, match_opcode, INSN_BRANCH },
 
 /* nuclei addibne*/
 {"xl.addibne", 32, INSN_CLASS_XXLCZ_BRI, "d,s,bK,bk", MATCH_XL_ADDIBNE, MASK_XL_ADDIBNE, match_opcode, INSN_BRANCH },
@@ -2754,8 +2754,8 @@ const struct riscv_opcode riscv_opcodes[] =
 {"cm.mva01s",  0,  INSN_CLASS_ZCMP, "CZ1,CZ2",    MATCH_CM_MVA01S, MASK_CM_MVA01S, match_opcode, 0 },
 {"cm.mvsa01",  0,  INSN_CLASS_ZCMP, "CZ1,CZ2",    MATCH_CM_MVSA01, MASK_CM_MVSA01, match_sreg1_not_eq_sreg2, 0 },
 /* ZCMT instructions */
-{"cm.jt",      0,  INSN_CLASS_ZCMT, "CZI",        MATCH_TABLE_JUMP, MASK_CM_JT, match_cm_jt, 0 },
-{"cm.jalt",    0,  INSN_CLASS_ZCMT, "CZi",        MATCH_TABLE_JUMP, MASK_CM_JALT, match_cm_jalt, 0 },
+{"cm.jt",      0,  INSN_CLASS_ZCMT, "CZI",        MATCH_TABLE_JUMP, MASK_CM_JT, match_cm_jt, INSN_BRANCH},
+{"cm.jalt",    0,  INSN_CLASS_ZCMT, "CZi",        MATCH_TABLE_JUMP, MASK_CM_JALT, match_cm_jalt, INSN_BRANCH},
 /* Terminate the list.  */
 {0, 0, INSN_CLASS_NONE, 0, 0, 0, 0, 0}
 };

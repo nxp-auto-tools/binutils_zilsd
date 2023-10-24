@@ -4737,7 +4737,7 @@ void riscv_append_insn (struct riscv_cl_insn *insn, expressionS *imm_expr,
         return;
      }
 
-     if((insn->insn_mo->match == MATCH_C_J) || (insn->insn_mo->match == MATCH_C_JAL))
+     if(((insn->insn_mo->pinfo) & INSN_BRANCH) || ((insn->insn_mo->pinfo) & INSN_CONDBRANCH) || ((insn->insn_mo->pinfo) & INSN_JSR))
      {
         release_cached_insn (0);
         append_insn (insn, imm_expr, imm_reloc);
@@ -4761,6 +4761,15 @@ void riscv_append_insn (struct riscv_cl_insn *insn, expressionS *imm_expr,
     it can utilize the global variable input_line_pointer to 
     check whether the next line represents an internal label.
     */
+
+     if(*next_char == '.')
+     {
+        release_cached_insn (0);
+        append_insn (insn, imm_expr, imm_reloc);
+        md_flag_idx = 0;
+        return;
+     }
+
      while (ISDIGIT (*next_char))
      {
         local_label_step = 1;
