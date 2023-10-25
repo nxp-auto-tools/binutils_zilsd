@@ -2208,14 +2208,17 @@ has_cached_insn (void)
 static void
 release_cached_insn (int start)
 {
-  for(int ii = start; ii <= md_flag_idx; ii++)
+  if((insn_combiner[0]->idx > 0) && use_insn_combiner ())
   {
-    append_insn (&insn_combiner[ii]->insn,
-      &insn_combiner[ii]->imm_expr,
-      insn_combiner[ii]->imm_reloc);
-    insn_combiner[ii]->idx = 0;
+    for(int ii = start; ii <= md_flag_idx; ii++)
+    {
+        append_insn (&insn_combiner[ii]->insn,
+          &insn_combiner[ii]->imm_expr,
+          insn_combiner[ii]->imm_reloc);
+        insn_combiner[ii]->idx = 0;
+    }
+    md_flag_idx = 0;
   }
-  md_flag_idx = 0;
 }
 
 /* Build an instruction created by a macro expansion.  This is passed
@@ -4724,35 +4727,6 @@ void riscv_append_insn (struct riscv_cl_insn *insn, expressionS *imm_expr,
       //struct riscv_combiner_matcher *matchers = insn_combiner->matcher;
       struct riscv_combiner_matcher *matchers = insn_combiner[0]->matcher;
       unsigned idx;
-      /* if one insn is cached, we now check the second insn */
-      if (insn_combiner[0]->idx)
-	{
-	  idx = insn_combiner[0]->idx - 1;
-     
-     if(insn->insn_mo->match == MATCH_BLTU)
-     {
-        release_cached_insn (0);
-        append_insn (insn, imm_expr, imm_reloc);
-        md_flag_idx = 0;
-        return;
-     }
-
-     if(((insn->insn_mo->pinfo) & INSN_BRANCH) || ((insn->insn_mo->pinfo) & INSN_CONDBRANCH) || ((insn->insn_mo->pinfo) & INSN_JSR))
-     {
-        release_cached_insn (0);
-        append_insn (insn, imm_expr, imm_reloc);
-        md_flag_idx = 0;
-        return;
-     }
-
-     if(md_flag_idx >= 32)
-     {
-        release_cached_insn (0);
-        append_insn (insn, imm_expr, imm_reloc);
-        md_flag_idx = 0;
-        return;
-     }
-    
     char *next_char = trim_left(input_char);
     /*
     The logic for determining local labels in RISC-V involves setting LOCAL_LABELS_FB=1. 
@@ -4803,6 +4777,26 @@ void riscv_append_insn (struct riscv_cl_insn *insn, expressionS *imm_expr,
               return;
             }
         }
+     }
+      /* if one insn is cached, we now check the second insn */
+    if (insn_combiner[0]->idx)
+	  {
+	   idx = insn_combiner[0]->idx - 1;
+
+     if(((insn->insn_mo->pinfo) & INSN_BRANCH) || ((insn->insn_mo->pinfo) & INSN_CONDBRANCH) || ((insn->insn_mo->pinfo) & INSN_JSR))
+     {
+        release_cached_insn (0);
+        append_insn (insn, imm_expr, imm_reloc);
+        md_flag_idx = 0;
+        return;
+     }
+
+     if(md_flag_idx >= 32)
+     {
+        release_cached_insn (0);
+        append_insn (insn, imm_expr, imm_reloc);
+        md_flag_idx = 0;
+        return;
      }
 
      if (matchers[idx].check_2 (insn, imm_expr, imm_reloc))
@@ -6108,7 +6102,6 @@ riscv_md_end (void)
         free (insn_combiner[ii]);
       }
     }
-  riscv_set_public_attributes ();
 }
 
 /* Adjust the symbol table.  */
