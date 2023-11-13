@@ -2640,6 +2640,7 @@ const struct riscv_opcode riscv_opcodes[] =
 {"dsmtt32.sra32"     , 0, INSN_CLASS_XXLDSPN2X, "d,s,t", MATCH_DSMTT32_SRA32  , MASK_DSMTT32_SRA32   , match_opcode, 0},
 {"dpkbb32"    , 0, INSN_CLASS_XXLDSPN2X, "d,s,t", MATCH_DPKBB32  , MASK_DPKBB32   , match_opcode, 0},
 {"dpkbt32"    , 0, INSN_CLASS_XXLDSPN2X, "d,s,t", MATCH_DPKBT32  , MASK_DPKBT32   , match_opcode, 0},
+{"dpack32"    , 0, INSN_CLASS_XXLDSPN2X, "d,s,t", MATCH_DPACK32  , MASK_DPACK32   , match_opcode, 0},
 {"dpktt32"    , 0, INSN_CLASS_XXLDSPN2X, "d,s,t", MATCH_DPKTT32  , MASK_DPKTT32   , match_opcode, 0},
 {"dpktb32"    , 0, INSN_CLASS_XXLDSPN2X, "d,s,t", MATCH_DPKTB32  , MASK_DPKTB32   , match_opcode, 0},
 {"dpktb16"    , 0, INSN_CLASS_XXLDSPN2X, "d,s,t", MATCH_DPKTB16  , MASK_DPKTB16   , match_opcode, 0},
