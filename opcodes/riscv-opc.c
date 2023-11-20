@@ -2679,6 +2679,16 @@ const struct riscv_opcode riscv_opcodes[] =
 {"dmxsr33",     0, INSN_CLASS_XXLDSPN2X, "d,s,t", MATCH_DMXSR33, MASK_DMXSR33   , match_opcode, 0},
 {"dredas16",    0, INSN_CLASS_XXLDSPN2X, "d,s",   MATCH_DREDAS16 , MASK_DREDAS16     , match_opcode, 0},
 {"dredsa16",    0, INSN_CLASS_XXLDSPN2X, "d,s",   MATCH_DREDSA16 , MASK_DREDSA16     , match_opcode, 0},
+{"dsunpkd810",  0, INSN_CLASS_XXLDSPN2X, "d,s",   MATCH_DSUNPKD810 , MASK_DSUNPKD810  , match_opcode, 0},
+{"dsunpkd820",  0, INSN_CLASS_XXLDSPN2X, "d,s",   MATCH_DSUNPKD820 , MASK_DSUNPKD820  , match_opcode, 0},
+{"dsunpkd830",  0, INSN_CLASS_XXLDSPN2X, "d,s",   MATCH_DSUNPKD830 , MASK_DSUNPKD830  , match_opcode, 0},
+{"dsunpkd831",  0, INSN_CLASS_XXLDSPN2X, "d,s",   MATCH_DSUNPKD831 , MASK_DSUNPKD831  , match_opcode, 0},
+{"dsunpkd832",  0, INSN_CLASS_XXLDSPN2X, "d,s",   MATCH_DSUNPKD832 , MASK_DSUNPKD832  , match_opcode, 0},
+{"dzunpkd810",  0, INSN_CLASS_XXLDSPN2X, "d,s",   MATCH_DZUNPKD810 , MASK_DZUNPKD810  , match_opcode, 0},
+{"dzunpkd820",  0, INSN_CLASS_XXLDSPN2X, "d,s",   MATCH_DZUNPKD820 , MASK_DZUNPKD820  , match_opcode, 0},
+{"dzunpkd830",  0, INSN_CLASS_XXLDSPN2X, "d,s",   MATCH_DZUNPKD830 , MASK_DZUNPKD830  , match_opcode, 0},
+{"dzunpkd831",  0, INSN_CLASS_XXLDSPN2X, "d,s",   MATCH_DZUNPKD831 , MASK_DZUNPKD831  , match_opcode, 0},
+{"dzunpkd832",  0, INSN_CLASS_XXLDSPN2X, "d,s",   MATCH_DZUNPKD832 , MASK_DZUNPKD832  , match_opcode, 0},
 
 //N3
 {"dkmmac"     , 0, INSN_CLASS_XXLDSPN3X, "d,s,t", MATCH_DKMMAC  , MASK_DKMMAC   , match_opcode, 0},
