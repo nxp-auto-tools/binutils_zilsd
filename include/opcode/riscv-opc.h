@@ -3182,6 +3182,21 @@
 #define MASK_VSM3C_VI 0xfe00707f
 #define MATCH_VSM3ME_VV 0x82002077
 #define MASK_VSM3ME_VV 0xfe00707f
+/* Zfbfmin instructions.  */
+#define MATCH_FCVT_BF16_S 0x44800053
+#define MASK_FCVT_BF16_S 0xfff0007f
+#define MATCH_FCVT_S_BF16 0x40600053
+#define MASK_FCVT_S_BF16 0xfff0007f
+/* Zvfbfmin instructions.  */
+#define MATCH_VFNCVTBF16_FFW 0x480e9057
+#define MASK_VFNCVTBF16_FFW 0xfc0ff07f
+#define MATCH_VFWCVTBF16_FFV 0x48069057
+#define MASK_VFWCVTBF16_FFV 0xfc0ff07f
+/* Zvfbfwma instructions.  */
+#define MATCH_VFWMACCBF16_VV 0xec001057
+#define MASK_VFWMACCBF16_VV 0xfc00707f
+#define MATCH_VFWMACCBF16_VF 0xec005057
+#define MASK_VFWMACCBF16_VF 0xfc00707f
 /* Svinval instruction.  */
 #define MATCH_SINVAL_VMA 0x16000073
 #define MASK_SINVAL_VMA 0xfe007fff

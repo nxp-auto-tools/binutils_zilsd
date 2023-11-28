@@ -1994,6 +1994,18 @@ const struct riscv_opcode riscv_opcodes[] =
 {"vsm3c.vi",     0, INSN_CLASS_ZVKSH, "Vd,Vt,Vj", MATCH_VSM3C_VI, MASK_VSM3C_VI, match_opcode, 0},
 {"vsm3me.vv",    0, INSN_CLASS_ZVKSH, "Vd,Vt,Vs", MATCH_VSM3ME_VV, MASK_VSM3ME_VV, match_opcode, 0},
 
+/* Zfbfmin instructions.  */
+{"fcvt.bf16.s",0, INSN_CLASS_ZFBFMIN, "D,S",       MATCH_FCVT_BF16_S|MASK_RM, MASK_FCVT_BF16_S|MASK_RM, match_opcode, 0 },
+{"fcvt.s.bf16",0, INSN_CLASS_ZFBFMIN, "D,S",       MATCH_FCVT_S_BF16|MASK_RM, MASK_FCVT_S_BF16|MASK_RM, match_opcode, 0 },
+
+/* Zvfbfmin instructions.  */
+{"vfncvtbf16.f.f.w",  0, INSN_CLASS_ZVFBFMIN, "Vd,VtVm", MATCH_VFNCVTBF16_FFW, MASK_VFNCVTBF16_FFW, match_opcode, 0},
+{"vfwcvtbf16.f.f.v",  0, INSN_CLASS_ZVFBFMIN, "Vd,VtVm", MATCH_VFWCVTBF16_FFV, MASK_VFWCVTBF16_FFV, match_opcode, 0},
+
+/* Zvfbfwma instructions.  */
+{"vfwmaccbf16.vv",  0, INSN_CLASS_ZVFBFWMA, "Vd,Vt,VsVm", MATCH_VFWMACCBF16_VV, MASK_VFWMACCBF16_VV, match_opcode, 0},
+{"vfwmaccbf16.vf",  0, INSN_CLASS_ZVFBFWMA, "Vd,Vt,sVm",  MATCH_VFWMACCBF16_VF, MASK_VFWMACCBF16_VF, match_opcode, 0},
+
 /* Supervisor instructions.  */
 {"csrr",       0, INSN_CLASS_ZICSR, "d,E",   MATCH_CSRRS, MASK_CSRRS|MASK_RS1, match_opcode, INSN_ALIAS },
 {"csrw",       0, INSN_CLASS_ZICSR, "E,s",   MATCH_CSRRW, MASK_CSRRW|MASK_RD, match_opcode, INSN_ALIAS },
