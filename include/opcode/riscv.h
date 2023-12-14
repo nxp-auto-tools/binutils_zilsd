@@ -486,6 +486,10 @@ static inline unsigned int riscv_insn_length (insn_t insn)
 #define OP_SH_VS1		15
 #define OP_MASK_VS2		0x1f
 #define OP_SH_VS2		20
+#define OP_MASK_VCRS2		0x1f
+#define OP_SH_VCRS2		2
+#define OP_MASK_VS3		0x1fU
+#define OP_SH_VS3		27
 #define OP_MASK_VIMM		0x1f
 #define OP_SH_VIMM		15
 #define OP_MASK_VMASK		0x1

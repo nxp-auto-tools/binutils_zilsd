@@ -1583,6 +1583,7 @@ validate_riscv_insn (const struct riscv_opcode *opc, int length)
 	    case 'd':
 	    case 'f': USE_BITS (OP_MASK_VD, OP_SH_VD); break;
 	    case 'e': USE_BITS (OP_MASK_VWD, OP_SH_VWD); break;
+	    case 'r': USE_BITS (OP_MASK_VS3, OP_SH_VS3); break;
 	    case 's': USE_BITS (OP_MASK_VS1, OP_SH_VS1); break;
 	    case 't': USE_BITS (OP_MASK_VS2, OP_SH_VS2); break;
 	    case 'u': USE_BITS (OP_MASK_VS1, OP_SH_VS1);
@@ -1591,6 +1592,7 @@ validate_riscv_insn (const struct riscv_opcode *opc, int length)
 		      USE_BITS (OP_MASK_VS1, OP_SH_VS1);
 		      USE_BITS (OP_MASK_VS2, OP_SH_VS2); break;
 	    case '0': break;
+	    case '2': USE_BITS (OP_MASK_VCRS2, OP_SH_VCRS2); break;
 	    case 'b': used_bits |= ENCODE_RVV_VB_IMM (-1U); break;
 	    case 'c': used_bits |= ENCODE_RVV_VC_IMM (-1U); break;
 	    case 'i':
@@ -3603,6 +3605,12 @@ riscv_ip (char *str, struct riscv_cl_insn *ip, expressionS *imm_expr,
 		  INSERT_OPERAND (VS2, *ip, regno);
 		  continue;
 
+		case 'r': /* VS3 */
+		  if (!reg_lookup (&asarg, RCLASS_VECR, &regno))
+		    break;
+		  INSERT_OPERAND (VS3, *ip, regno);
+		  continue;
+
 		case 'u': /* VS1 == VS2 */
 		  if (!reg_lookup (&asarg, RCLASS_VECR, &regno))
 		    break;
@@ -3626,6 +3634,12 @@ riscv_ip (char *str, struct riscv_cl_insn *ip, expressionS *imm_expr,
 		  if (reg_lookup (&asarg, RCLASS_VECR, &regno) && regno == 0)
 		    continue;
 		  break;
+
+		case '2':
+		  if (!reg_lookup (&asarg, RCLASS_VECR, &regno))
+		    break;
+		  INSERT_OPERAND (VCRS2, *ip, regno);
+		  continue;
 
 		case 'b': /* vtypei for vsetivli */
 		  my_getVsetvliExpression (imm_expr, asarg);
