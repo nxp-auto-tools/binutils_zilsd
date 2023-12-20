@@ -2004,7 +2004,7 @@ const struct riscv_opcode riscv_opcodes[] =
 
 /* Zvfbfwma instructions.  */
 {"vfwmaccbf16.vv",  0, INSN_CLASS_ZVFBFWMA, "Vd,Vt,VsVm", MATCH_VFWMACCBF16_VV, MASK_VFWMACCBF16_VV, match_opcode, 0},
-{"vfwmaccbf16.vf",  0, INSN_CLASS_ZVFBFWMA, "Vd,Vt,sVm",  MATCH_VFWMACCBF16_VF, MASK_VFWMACCBF16_VF, match_opcode, 0},
+{"vfwmaccbf16.vf",  0, INSN_CLASS_ZVFBFWMA, "Vd,T,VsVm",  MATCH_VFWMACCBF16_VF, MASK_VFWMACCBF16_VF, match_opcode, 0},
 
 /* Supervisor instructions.  */
 {"csrr",       0, INSN_CLASS_ZICSR, "d,E",   MATCH_CSRRS, MASK_CSRRS|MASK_RS1, match_opcode, INSN_ALIAS },
