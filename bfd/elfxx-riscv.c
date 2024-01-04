@@ -1061,6 +1061,15 @@ check_implicit_for_i (const char *implicit ATTRIBUTE_UNUSED,
 	      && subset->minor_version < 1));
 }
 
+/* Add the IMPLICIT only when the version of SUBSET less than 2.0.  */
+
+static bool
+check_implicit_for_e (const char *implicit ATTRIBUTE_UNUSED,
+		      riscv_subset_t *subset)
+{
+  return (subset->major_version < 2);
+}
+
 /* Record all implicit information for the subsets.  */
 struct riscv_implicit_subset
 {
@@ -1072,6 +1081,7 @@ struct riscv_implicit_subset
 static struct riscv_implicit_subset riscv_implicit_subsets[] =
 {
   {"e", "i",		check_implicit_always},
+  {"e", "zicsr",	check_implicit_for_e},
   {"i", "zicsr",	check_implicit_for_i},
   {"i", "zifencei",	check_implicit_for_i},
   {"g", "i",		check_implicit_always},
