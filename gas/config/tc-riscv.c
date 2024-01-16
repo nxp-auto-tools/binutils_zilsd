@@ -4750,12 +4750,26 @@ void riscv_append_insn (struct riscv_cl_insn *insn, expressionS *imm_expr,
     check whether the next line represents an internal label.
     */
 
-     if(*next_char == '.')
+     if(*next_char == '.' && insn_combiner[0]->idx)
      {
-        release_cached_insn (0);
-        append_insn (insn, imm_expr, imm_reloc);
-        md_flag_idx = 0;
-        return;
+        if(next_char[1]=='b' && next_char[2]=='y' && next_char[3]=='t' && next_char[4]=='e')
+        {
+
+        }
+        else
+        {
+          if((next_char[1]=='L' && ISDIGIT(next_char[2])) || (next_char[1]=='l' && next_char[2]=='o' && next_char[3]=='c'))
+          {
+
+          }
+          else
+          {
+            release_cached_insn (0);
+            append_insn (insn, imm_expr, imm_reloc);
+            md_flag_idx = 0;
+            return;
+          }
+        }
      }
 
      while (ISDIGIT (*next_char))
@@ -4799,10 +4813,14 @@ void riscv_append_insn (struct riscv_cl_insn *insn, expressionS *imm_expr,
 
      if(((insn->insn_mo->pinfo) & INSN_BRANCH) || ((insn->insn_mo->pinfo) & INSN_CONDBRANCH) || ((insn->insn_mo->pinfo) & INSN_JSR))
      {
-        release_cached_insn (0);
-        append_insn (insn, imm_expr, imm_reloc);
-        md_flag_idx = 0;
-        return;
+          if (insn->insn_mo->match != MATCH_BNE
+        && insn->insn_mo->match != MATCH_C_BNEZ)
+        {
+            release_cached_insn (0);
+            append_insn (insn, imm_expr, imm_reloc);
+            md_flag_idx = 0;
+            return;
+        }
      }
 
      if(md_flag_idx >= 32)
