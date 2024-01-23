@@ -2004,7 +2004,7 @@ append_insn (struct riscv_cl_insn *ip, expressionS *address_expr,
 static bfd_boolean
 use_insn_combiner (void)
 {
-  return riscv_subset_supports (&riscv_rps_as, "xxlcz") && (xlen == 32);
+  return riscv_subset_supports (&riscv_rps_as, "xxlczbri") && (xlen == 32);
 }
 
 
@@ -2012,7 +2012,7 @@ use_insn_combiner (void)
 static bfd_boolean
 use_combiner_p (void)
 {
-  return riscv_subset_supports (&riscv_rps_as, "xxlcz") && (xlen == 32);
+  return riscv_subset_supports (&riscv_rps_as, "xxlczbri") && (xlen == 32);
 }
 
 /* Cache an instruction when it passes check function */
@@ -2032,7 +2032,7 @@ cache_an_insn (struct riscv_cl_insn *insn,
 static bfd_boolean
 combiner_avail_xlcz (void)
 {
-   return riscv_subset_supports (&riscv_rps_as, "xxlcz") && (xlen == 32);
+   return riscv_subset_supports (&riscv_rps_as, "xxlczbri") && (xlen == 32);
 }
 
 static bfd_boolean
