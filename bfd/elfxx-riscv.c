@@ -2905,6 +2905,14 @@ riscv_multi_subset_supports_ext (riscv_parse_subset_t *rps,
       return "xxlczbitrev' or `xxlcz";
     case INSN_CLASS_XXLCZ_GP:
       return "xxlczgp' or `xxlcz";
+    case INSN_CLASS_XXLDSP:
+      return "xxldsp' or `xxldspn1x' or `xxldspn2x' or `xxldspn3x";
+    case INSN_CLASS_XXLDSPN1X:
+      return "xxldspn1x' or `xxldspn2x' or `xxldspn3x";
+    case INSN_CLASS_XXLDSPN2X:
+      return "xxldspn2x' or `xxldspn3x";
+    case INSN_CLASS_XXLDSPN3X:
+      return "xxldspn3x";
     default:
       rps->error_handler
         (_("internal: unreachable INSN_CLASS_*"));
