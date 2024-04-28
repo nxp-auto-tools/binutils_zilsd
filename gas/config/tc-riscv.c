@@ -37,6 +37,7 @@
 #include <limits.h>
 
 int md_flag_idx = 0;
+extern char is_c_file_flag;
 /* Information about an instruction, including its format, operands
    and fixups.  */
 struct riscv_cl_insn
@@ -2004,15 +2005,7 @@ append_insn (struct riscv_cl_insn *ip, expressionS *address_expr,
 static bfd_boolean
 use_insn_combiner (void)
 {
-  return riscv_subset_supports (&riscv_rps_as, "xxlczbri") && (xlen == 32);
-}
-
-
-/* Return true if we insn combiner is used. */
-static bfd_boolean
-use_combiner_p (void)
-{
-  return riscv_subset_supports (&riscv_rps_as, "xxlczbri") && (xlen == 32);
+  return riscv_subset_supports (&riscv_rps_as, "xxlczbri") && (xlen == 32) && is_c_file_flag;
 }
 
 /* Cache an instruction when it passes check function */
@@ -2029,11 +2022,6 @@ cache_an_insn (struct riscv_cl_insn *insn,
   insn_combiner[index]->imm_reloc = reloc_type;
 }
 
-static bfd_boolean
-combiner_avail_xlcz (void)
-{
-   return riscv_subset_supports (&riscv_rps_as, "xxlczbri") && (xlen == 32);
-}
 
 static bfd_boolean
 riscv_xlcz_addibne_1 (struct riscv_cl_insn *insn, expressionS *imm_expr,
@@ -2174,7 +2162,7 @@ riscv_xlcz_addibne_out (struct riscv_cl_insn *insn, expressionS *imm_expr,
 
 /* Instruction pair matching table.  */
 static struct riscv_combiner_matcher riscv_comb_matchers [] = {
-   { riscv_xlcz_addibne_1, riscv_xlcz_addibne_2, riscv_xlcz_addibne_out, combiner_avail_xlcz },
+   { riscv_xlcz_addibne_1, riscv_xlcz_addibne_2, riscv_xlcz_addibne_out, use_insn_combiner },
    { NULL, NULL, NULL, NULL },
 };
 
@@ -5717,7 +5705,7 @@ riscv_cleanup (void)
     /* Assembly code can starts with label, but the combiner is initialized
       when gas meets the first instruction. So we need to check the combiner
       is initialized or not when call cleanup. */
-  if (use_combiner_p ()
+  if (use_insn_combiner ()
       && insn_combiner[0]
       && (insn_combiner[0]->idx))
     {

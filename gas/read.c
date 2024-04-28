@@ -66,6 +66,7 @@
 
 char *input_line_pointer;	/*->next char of source file to parse.  */
 bool input_from_string = false;
+char is_c_file_flag = 0x3;
 
 #if BITS_PER_CHAR != 8
 /*  The following table is indexed by[(char)] and will break if
@@ -2007,6 +2008,15 @@ s_linefile (int ignore ATTRIBUTE_UNUSED)
 	{
 	  int this_flag;
 
+    if(strcmp(file, "<built-in>") == NULL)
+    {
+      is_c_file_flag &= 0x1;
+    }
+
+    if(strcmp(file, "<command-line>") == NULL)
+    {
+      is_c_file_flag &= 0x2;
+    }
 	  while (get_linefile_number (&this_flag))
 	    switch (this_flag)
 	      {
