@@ -1177,6 +1177,8 @@ static struct riscv_implicit_subset riscv_implicit_subsets[] =
   {"sscofpmf", "zicsr",		check_implicit_always},
   {"ssstateen", "zicsr",	check_implicit_always},
   {"sstc", "zicsr",		check_implicit_always},
+  {"zcmlsd", "zilsd",		check_implicit_always},
+  {"zcmlsd", "zca",		check_implicit_always},
   {NULL, NULL, NULL}
 };
 
@@ -1988,7 +1990,15 @@ riscv_parse_check_conflicts (riscv_parse_subset_t *rps)
 	(_("`zfinx' is conflict with the `f/d/q/zfh/zfhmin' extension"));
       no_conflict = false;
     }
-
+  if (riscv_lookup_subset (rps->subset_list, "zcmlsd", &subset)
+      && ((riscv_lookup_subset (rps->subset_list, "c", &subset)
+	   && riscv_lookup_subset (rps->subset_list, "f", &subset))
+	  || riscv_lookup_subset (rps->subset_list, "zcf", &subset)))
+    {
+      rps->error_handler
+	(_("`zcmlsd' is conflict with the `c+f'/ `zcf' extension"));
+      no_conflict = false;
+    }
   bool support_zve = false;
   bool support_zvl = false;
   riscv_subset_t *s = rps->subset_list->head;
@@ -2647,7 +2657,7 @@ riscv_multi_subset_supports (riscv_parse_subset_t *rps,
     case INSN_CLASS_ZILSD:
       return riscv_subset_supports(rps, "zilsd");
     case INSN_CLASS_ZCMLSD:
-      return riscv_subset_supports(rps, "zilsd") && riscv_subset_supports(rps, "zca");
+      return riscv_subset_supports(rps, "zcmlsd");
     default:
       rps->error_handler
         (_("internal: unreachable INSN_CLASS_*"));
