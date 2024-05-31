@@ -1177,8 +1177,8 @@ static struct riscv_implicit_subset riscv_implicit_subsets[] =
   {"sscofpmf", "zicsr",		check_implicit_always},
   {"ssstateen", "zicsr",	check_implicit_always},
   {"sstc", "zicsr",		check_implicit_always},
-  {"zcmlsd", "zilsd",		check_implicit_always},
-  {"zcmlsd", "zca",		check_implicit_always},
+  // {"zcmlsd", "zilsd",	check_implicit_always},
+  // {"zcmlsd", "zca",		check_implicit_always},
   {NULL, NULL, NULL}
 };
 
@@ -1324,8 +1324,8 @@ static struct riscv_supported_ext riscv_supported_std_z_ext[] =
   {"zcd",		ISA_SPEC_CLASS_DRAFT,		1, 0,  0 },
   {"zcmp",		ISA_SPEC_CLASS_DRAFT,		1, 0,  0 },
   {"zcmt",		ISA_SPEC_CLASS_DRAFT,		1, 0,  0 },
-  {"zilsd",   ISA_SPEC_CLASS_DRAFT,   1, 0,  0 },
-  {"zcmlsd",   ISA_SPEC_CLASS_DRAFT,   1, 0,  0 },
+  {"zilsd",		ISA_SPEC_CLASS_DRAFT,           1, 0,  0 },
+  {"zcmlsd",		ISA_SPEC_CLASS_DRAFT,           1, 0,  0 },
   {NULL, 0, 0, 0, 0}
 };
 
@@ -2658,6 +2658,7 @@ riscv_multi_subset_supports (riscv_parse_subset_t *rps,
       return riscv_subset_supports(rps, "zilsd");
     case INSN_CLASS_ZCMLSD:
       return riscv_subset_supports(rps, "zcmlsd");
+      // || (riscv_subset_supports(rps, "zilsd")&&riscv_subset_supports(rps, "zca"))
     default:
       rps->error_handler
         (_("internal: unreachable INSN_CLASS_*"));
@@ -2931,7 +2932,7 @@ riscv_multi_subset_supports_ext (riscv_parse_subset_t *rps,
     case INSN_CLASS_ZILSD:
       return "zilsd";
     case INSN_CLASS_ZCMLSD:
-      return _("zcmlsd");
+      return "zcmlsd";
     default:
       rps->error_handler
         (_("internal: unreachable INSN_CLASS_*"));
