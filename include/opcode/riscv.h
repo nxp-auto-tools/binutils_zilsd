@@ -689,8 +689,8 @@ enum riscv_insn_class
   INSN_CLASS_XXLCZ_BRI,
   INSN_CLASS_XXLCZ_BITREV,
   INSN_CLASS_XXLCZ_GP,
-  INSN_CLASS_ZILSD,
-  INSN_CLASS_ZCMLSD,
+  // INSN_CLASS_ZILSD,
+  // INSN_CLASS_ZCMLSD,
 };
 
 /* This structure holds information for a particular instruction.  */
