@@ -1692,6 +1692,15 @@ validate_riscv_insn (const struct riscv_opcode *opc, int length)
 	      goto unknown_validate_operand;
 	    }
 	  break;
+	case 'G': /* Zilsd operand */
+		switch (*++oparg)
+		{
+		case 'd': USE_BITS (OP_MASK_RD, OP_SH_RD); break;
+		case 't': USE_BITS (OP_MASK_RS2, OP_SH_RS2); break;
+		default:
+			goto unknown_validate_operand;
+		}
+    break;
 	default:
 	unknown_validate_operand:
 	  as_bad (_("internal: bad RISC-V opcode "
@@ -4015,6 +4024,33 @@ riscv_ip (char *str, struct riscv_cl_insn *ip, expressionS *imm_expr,
 		  goto unknown_riscv_ip_operand;
 		}
 	      break;
+
+	case 'G': /* Zilsd ld,sd specific operands. */
+		switch(*++oparg)
+		{
+			case 'd':
+			case 't':
+				if (reg_lookup (&asarg, RCLASS_GPR, &regno)&&(regno%2==0))
+				{
+					char c = *oparg;
+					if (*asarg == ' ')
+						++asarg;
+
+					/* Now that we have assembled one operand, we use the args
+					string to figure out where it goes in the instruction.  */
+					switch (c)
+					{
+						case 'd':
+							INSERT_OPERAND (RD, *ip, regno);
+							break;
+						case 't':
+							INSERT_OPERAND (RS2, *ip, regno);
+							break;
+					}
+					continue;
+				}
+		}
+	break;
 
 	    default:
 	    unknown_riscv_ip_operand:
