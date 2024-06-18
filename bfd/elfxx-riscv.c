@@ -1324,7 +1324,7 @@ static struct riscv_supported_ext riscv_supported_std_z_ext[] =
   {"zcd",		ISA_SPEC_CLASS_DRAFT,		1, 0,  0 },
   {"zcmp",		ISA_SPEC_CLASS_DRAFT,		1, 0,  0 },
   {"zcmt",		ISA_SPEC_CLASS_DRAFT,		1, 0,  0 },
-  // {"zilsd",		ISA_SPEC_CLASS_DRAFT,           1, 0,  0 },
+  {"zilsd",		ISA_SPEC_CLASS_DRAFT,           1, 0,  0 },
   // {"zcmlsd",		ISA_SPEC_CLASS_DRAFT,           1, 0,  0 },
   {NULL, 0, 0, 0, 0}
 };
@@ -2654,6 +2654,8 @@ riscv_multi_subset_supports (riscv_parse_subset_t *rps,
       return riscv_subset_supports(rps, "xxlczgp") || riscv_subset_supports(rps, "xxlcz");
     case INSN_CLASS_XXLCZ_MAC:
       return riscv_subset_supports(rps, "xxlczmac") || riscv_subset_supports(rps, "xxlcz");
+    case INSN_CLASS_ZILSD:
+      return riscv_subset_supports(rps, "zilsd");
 
     default:
       rps->error_handler
@@ -2925,8 +2927,8 @@ riscv_multi_subset_supports_ext (riscv_parse_subset_t *rps,
       return "xxldspn2x' or `xxldspn3x";
     case INSN_CLASS_XXLDSPN3X:
       return "xxldspn3x";
-    // case INSN_CLASS_ZILSD:
-    //   return "zilsd";
+    case INSN_CLASS_ZILSD:
+      return "zilsd";
     // case INSN_CLASS_ZCMLSD:
     //   return "zcmlsd";
     default:
