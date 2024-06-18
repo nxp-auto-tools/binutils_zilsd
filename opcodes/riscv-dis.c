@@ -806,6 +806,24 @@ print_insn_args (const char *oparg, insn_t l, bfd_vma pc, disassemble_info *info
 	      goto undefined_modifier;
 	    }
 	  break;
+	case 'G': /* Zilsd ld,sd specific operands. */
+		switch (*++oparg)
+		{
+			case 'd':
+				if ((l & MASK_AUIPC) == MATCH_AUIPC)
+					pd->hi_addr[rd] = pc + EXTRACT_UTYPE_IMM (l);
+				else if ((l & MASK_LUI) == MATCH_LUI)
+					pd->hi_addr[rd] = EXTRACT_UTYPE_IMM (l);
+				else if ((l & MASK_C_LUI) == MATCH_C_LUI)
+					pd->hi_addr[rd] = EXTRACT_CITYPE_LUI_IMM (l);
+				print (info->stream, dis_style_register, "%s", riscv_gpr_names[rd]);
+				break;
+			case 't':
+				print (info->stream, dis_style_register, "%s",
+					riscv_gpr_names[EXTRACT_OPERAND (RS2, l)]);
+				break;
+		}
+	break;
 
 	default:
 	undefined_modifier:
