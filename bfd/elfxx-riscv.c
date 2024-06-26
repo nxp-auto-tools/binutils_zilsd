@@ -1288,7 +1288,8 @@ static struct riscv_implicit_subset riscv_implicit_subsets[] =
   {"b", "zbs",		check_implicit_always},
   {"a", "zaamo",	check_implicit_always},
   {"a", "zalrsc",	check_implicit_always},
-
+  {"zcmlsd", "zilsd",	check_implicit_always},
+  {"zcmlsd", "zca",	check_implicit_always},
   {"xsfvcp", "zve32x",  check_implicit_always},
   {NULL, NULL, NULL}
 };
@@ -1360,7 +1361,6 @@ static struct riscv_supported_ext riscv_supported_std_z_ext[] =
   {"zihintntl",		ISA_SPEC_CLASS_DRAFT,		1, 0,  0 },
   {"zihintpause",	ISA_SPEC_CLASS_DRAFT,		2, 0,  0 },
   {"zihpm",		ISA_SPEC_CLASS_DRAFT,		2, 0,  0 },
-  {"zilsd",		ISA_SPEC_CLASS_DRAFT,		1, 0,  0 },
   {"zmmul",		ISA_SPEC_CLASS_DRAFT,		1, 0,  0 },
   {"zaamo",		ISA_SPEC_CLASS_DRAFT,		1, 0,  0 },
   {"zabha",		ISA_SPEC_CLASS_DRAFT,		1, 0,  0 },
@@ -1436,6 +1436,8 @@ static struct riscv_supported_ext riscv_supported_std_z_ext[] =
   {"zcf",		ISA_SPEC_CLASS_DRAFT,		1, 0,  0 },
   {"zcd",		ISA_SPEC_CLASS_DRAFT,		1, 0,  0 },
   {"zcmp",		ISA_SPEC_CLASS_DRAFT,		1, 0,  0 },
+  {"zilsd",             ISA_SPEC_CLASS_DRAFT,   	0, 81, 0 },
+  {"zcmlsd",   		ISA_SPEC_CLASS_DRAFT,  		0, 81, 0 },
   {NULL, 0, 0, 0, 0}
 };
 
@@ -2111,6 +2113,16 @@ riscv_parse_check_conflicts (riscv_parse_subset_t *rps)
 	(_("`xtheadvector' is conflict with the `v' extension"));
       no_conflict = false;
     }
+  //Add zcmlsd conflicts
+  if (riscv_lookup_subset (rps->subset_list, "zcmlsd", &subset)
+      && ((riscv_lookup_subset (rps->subset_list, "c", &subset)
+	   && riscv_lookup_subset (rps->subset_list, "f", &subset))
+	  || riscv_lookup_subset (rps->subset_list, "zcf", &subset)))
+    {
+      rps->error_handler
+	(_("`zcmlsd' is conflict with the `c+f'/ `zcf' extension"));
+      no_conflict = false;
+    }
 
   bool support_zve = false;
   bool support_zvl = false;
@@ -2739,6 +2751,10 @@ riscv_multi_subset_supports (riscv_parse_subset_t *rps,
       return riscv_subset_supports (rps, "xsfvcp");
     case INSN_CLASS_XSFCEASE:
       return riscv_subset_supports (rps, "xsfcease");
+    case INSN_CLASS_ZILSD:
+      return riscv_subset_supports(rps, "zilsd");
+    case INSN_CLASS_ZCMLSD:
+      return riscv_subset_supports(rps, "zcmlsd");
     default:
       rps->error_handler
         (_("internal: unreachable INSN_CLASS_*"));
@@ -3009,6 +3025,10 @@ riscv_multi_subset_supports_ext (riscv_parse_subset_t *rps,
       return "xtheadzvamo";
     case INSN_CLASS_XSFCEASE:
       return "xsfcease";
+    case INSN_CLASS_ZILSD:
+      return "zilsd";
+    case INSN_CLASS_ZCMLSD:
+      return "zcmlsd";
     default:
       rps->error_handler
         (_("internal: unreachable INSN_CLASS_*"));
